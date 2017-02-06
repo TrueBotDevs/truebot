@@ -213,5 +213,3 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
         }
     }
 }
-
-//Mjc1NTA1Nzk3MzczNDkzMjUx.C3Et9w.wuaFYKpi8IDal0u4Qj1YfyIgKrQ
