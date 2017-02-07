@@ -18,7 +18,6 @@ artifacts:
   files:
     - truebot
     - appspec.yml
-    - scripts/upstart/truebot.conf
     - scripts/application_start.sh
     - scripts/before_install.sh
     - scripts/application_stop.sh
