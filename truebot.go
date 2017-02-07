@@ -1,35 +1,37 @@
 package main
 
 import (
-	"flag"
-	"fmt"
+    "flag"
+    "fmt"
     "strings"
     "github.com/fatih/color"
-	"github.com/bwmarrin/discordgo"
+    "github.com/bwmarrin/discordgo"
     sqlite "github.com/mattn/go-sqlite3"
     "database/sql"
     "log"
     "math/rand"
     "time"
+    "strconv"
 )
 
 // Variables used for command line parameters
 var (
-	Token string
-	BotID string
+    Token string
+    BotID string
+    
     db *sql.DB
 )
 
 func init() {
-	flag.StringVar(&Token, "t", "", "Bot Token")
-	flag.Parse()
+    flag.StringVar(&Token, "t", "", "Bot Token")
+    flag.Parse()
     
     //Connect to the database
     sql.Register("sqlite3_custom", &sqlite.SQLiteDriver{})
     var err error
     db, err = sql.Open("sqlite3_custom", "./config/TrueBot.db")
-	if err != nil {
-		log.Fatal("Failed to open database:", err)
+    if err != nil {
+        log.Fatal("Failed to open database:", err)
 	}
 	//defer db.Close()
 }
@@ -69,12 +71,6 @@ func addQuote(quote string) string{
     if strings.Contains(quote, "<@"){
         return "Fuck you, don't @ people in quotes"
     }else{
-        //fmt.Println("INSERT INTO quotes (quote) values ('"+quote+"')")
-        //_, err := db.Exec("INSERT INTO quotes (quote) values ('"+quote+"')")
-        //if err != nil {
-        //    log.Fatal(err)
-        //}
-        //return quote + " Added to the database"
         newItem := "INSERT INTO quotes (quote) values (?)"
         stmt, err := db.Prepare(newItem)
         if err != nil { panic(err) }
@@ -85,8 +81,56 @@ func addQuote(quote string) string{
         return quote + " Added to the database"
     }
 }
+//week, day, hour, minute, second
+func parseDate(date string) (string, time.Duration){
+    //1 week 5 days 1 hour 2 minutes 1 second
+    compString := "weeks days hours minutes seconds"
+    lookingForDates := true
+    dateArgs := strings.Split(date," ")
+    dateIndex := 0
+    var parsedDuration time.Duration
+    for lookingForDates {
+        if dateIndex >= len(dateArgs)-1{
+            lookingForDates = false
+            break
+        }
+        timeInt := strings.Split(date," ")[dateIndex:dateIndex+1][0]
+        timeStr := strings.Split(date," ")[dateIndex+1:dateIndex+2][0]
+        convertedInt, err := strconv.ParseInt(timeInt,10,32); 
+        if err != nil{
+            lookingForDates = false
+            fmt.Println(convertedInt)
+            break
+        }
+        if strings.Contains(compString,timeStr) == false{
+            lookingForDates = false
+            break
+        }
+        fmt.Println(timeInt + " " + timeStr)
+        dateIndex += 2
+        if strings.Contains("seconds",timeStr){
+            parsedDuration += time.Duration(convertedInt)*time.Second
+        }else if strings.Contains("days",timeStr){
+            parsedDuration += time.Duration(convertedInt*24)*time.Hour
+        }else if strings.Contains("hours",timeStr){
+            parsedDuration += time.Duration(convertedInt)*time.Hour
+        }else if strings.Contains("minutes",timeStr){
+            parsedDuration += time.Duration(convertedInt)*time.Minute
+        }else if strings.Contains("weeks",timeStr){
+            parsedDuration += time.Duration(convertedInt*24*7)*time.Hour
+        }
+    }
+    if dateIndex < len(dateArgs) {
+        return strings.Join(strings.Split(date," ")[dateIndex:]," "), parsedDuration
+    } else {
+        return " ", parsedDuration
+    }    
+}
 
 func main() {    
+    leftover, dur := parseDate("1 week 5 days 1 hour 2 minute 1 second Church is gay")
+    fmt.Println(time.Now().Add(dur))
+    fmt.Println(leftover)
     //Get row count
     cnt, err := db.Query("SELECT count(*) FROM quotes")
     if err != nil {
@@ -165,7 +209,7 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
     fmt.Fprintf(color.Output, "(%.5s) %s: %s\n", channel.Name, cyan(msg.Author.Username), msg.Content)
     
     //Check for commands
-    if msg.Content[:1] == "!" {
+    if msg.Content[:1] == "!"{
         cmd := strings.Split(msg.Content, " ")[0][1:]
         var arg = " "
         if len(msg.Content) > len(cmd)+1{
@@ -198,8 +242,8 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
         
         if cmd == "azorae"{
             var vChannel *discordgo.Channel
-            for _, state := range guild.VoiceStates {
-                if state.UserID == sender.ID {
+            for _, state := range guild.VoiceStates{
+                if state.UserID == sender.ID{
                     v := state.ChannelID
                     vChannel, _ = s.Channel(v)
                 }
