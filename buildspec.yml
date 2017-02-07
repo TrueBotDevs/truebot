@@ -1,0 +1,23 @@
+version: 0.1 # This is not a version number, do not change this line.
+
+phases:
+  pre_build:
+    commands:
+      - echo "Grabbing External Dependencies..."
+      - go get github.com/fatih/color
+      - go get github.com/bwmarrin/discordgo
+      - go get github.com/mattn/go-sqlite3
+  build:
+    commands:
+      - echo "Compiling..."
+      - go build truebot.go
+  post_build:
+    commands:
+      - echo "Build completed on $(date)"
+artifacts:
+  files:
+    - truebot
+    - appspec.yml
+    - scripts/upstart/truebot.conf
+    - scripts/application_start.sh
+    - scripts/before_install.sh

@@ -1,0 +1,21 @@
+version: 0.1 # This is not a version number, do not change this line.
+os: linux
+
+files:
+  - source: scripts/upstart/truebot.conf
+    destination: /etc/init/
+  - source: ./truebot
+    destination: /home/ubuntu/
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 600
+      runas: root
+  ApplicationStart:
+    - location: scripts/application_start.sh
+      timeout: 20
