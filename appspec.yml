@@ -1,4 +1,4 @@
-version: 0.1 # This is not a version number, do not change this line.
+version: 0.0 # This is not a version number, do not change this line.
 os: linux
 
 files:
