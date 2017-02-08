@@ -7,12 +7,14 @@ phases:
       - go get github.com/fatih/color
       - go get github.com/bwmarrin/discordgo
       - go get github.com/mattn/go-sqlite3
+      - echo "Moving files and changing directories."
+      - mkdir -p /usr/local/go/src/truebot
+      - mv * /usr/local/go/src/truebot/
+      - cd /usr/local/go/src/truebot
   build:
     commands:
       - echo "Compiling..."
-      - pwd
-      - ls -alth
-      - go build
+      - go build truebot
   post_build:
     commands:
       - echo "Build completed on $(date)"
