@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: ./truebot-2.0
-    destination: /home/ubuntu/truebot
+    destination: /home/ubuntu/
 permissions:
   - object: /
     pattern: "**"
