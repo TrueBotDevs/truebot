@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - echo "Compiling..."
-      - go build truebot
+      - go build
   post_build:
     commands:
       - echo "Build completed on $(date)"
