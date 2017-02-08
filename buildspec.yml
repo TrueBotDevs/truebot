@@ -12,8 +12,10 @@ phases:
       - mv * /usr/local/go/src/truebot-2.0/
       - cd /usr/local/go/src/truebot-2.0
       - pwd
+      - ls -alh ..
       - ls -alh
       - go build
+      - ls -alh
   build:
     commands:
       - echo "Compiling..."
