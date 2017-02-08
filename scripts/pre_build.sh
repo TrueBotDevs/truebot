@@ -11,6 +11,6 @@ mkdir -p $GOPATH/src/truebot-2.0
 
 echo "Moving files to $GOPATH/src/truebot-2.0"
 
-mv $CODEBUILD_SRC_DIR/* $GOPATH/src/truebot-2.0/
+mv $CODEBUILD_SRC_DIR/*.go $GOPATH/src/truebot-2.0/
 
 echo "Ready to compile."
