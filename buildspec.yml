@@ -4,10 +4,12 @@ phases:
   pre_build:
     commands:
       - echo "Running Prebuild Process..."
+      - chmod +x ./scripts/pre_build.sh
       - ./scripts/pre_build.sh
   build:
     commands:
       - echo "Compiling..."
+      - chmod +x ./scripts/build.sh
       - ./scripts/build.sh
   post_build:
     commands:
