@@ -185,18 +185,7 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
         
         if cmd == "ping"{
             s.ChannelMessageSend(msg.ChannelID, "Pong!")
-        }        
-        if cmd == "addquote"{
-            if arg == " "{
-                s.ChannelMessageSend(msg.ChannelID,"Usage: !addquote <quote>")
-            }else if arg == "<quote>"{
-                s.ChannelMessageSend(msg.ChannelID,"Very funny Church")
-            }else{
-                returnedVal := addQuote(arg)
-                s.ChannelMessageSend(msg.ChannelID,returnedVal)
-            }
-        }
-        
+        }                
         if cmd == "copycat"{
             s.ChannelMessageSend(msg.ChannelID,msg.Content)
         }

@@ -41,18 +41,24 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     fmt.Println(quotes[newIndex])
 }
 
-func addQuote(quote string) string{
-    if strings.Contains(quote, "<@"){
-        return "Fuck you, don't @ people in quotes"
+func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
+    if quote == " "{
+        s.ChannelMessageSend(msg.ChannelID,"Usage: !addquote <quote>")
+    }else if quote == "<quote>"{
+        s.ChannelMessageSend(msg.ChannelID,"Very funny Church")
     }else{
-        newItem := "INSERT INTO quotes (quote) values (?)"
-        stmt, err := db.Prepare(newItem)
-        if err != nil { panic(err) }
-        defer stmt.Close()
+        if strings.Contains(quote, "<@"){
+            s.ChannelMessageSend(msg.ChannelID, "Fuck you, don't @ people in quotes")
+        }else{
+            newItem := "INSERT INTO quotes (quote) values (?)"
+            stmt, err := db.Prepare(newItem)
+            if err != nil { panic(err) }
+            defer stmt.Close()
 
-        _, err2 := stmt.Exec(quote)
-        if err2 != nil { panic(err2) }
-        return quote + " Added to the database"
+            _, err2 := stmt.Exec(quote)
+            if err2 != nil { panic(err2) }
+            s.ChannelMessageSend(msg.ChannelID, quote + " Added to the database")
+        }
     }
 }
 
