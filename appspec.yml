@@ -2,8 +2,8 @@ version: 0.0 # This is not a "version" number, do not change this line.
 os: linux
 
 files:
-  - source: ./truebot
-    destination: /home/ubuntu/
+  - source: ./truebot-2.0
+    destination: /home/ubuntu/truebot
 permissions:
   - object: /
     pattern: "**"
@@ -11,12 +11,12 @@ permissions:
     group: ubuntu
 hooks:
   ApplicationStop:
-    - location: scripts/application_stop.sh
+    - location: ./application_stop.sh
       timeout: 10
   BeforeInstall:
-    - location: scripts/before_install.sh
+    - location: ./before_install.sh
       timeout: 600
       runas: root
   ApplicationStart:
-    - location: scripts/application_start.sh
+    - location: ./application_start.sh
       timeout: 10

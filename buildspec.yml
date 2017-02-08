@@ -3,30 +3,20 @@ version: 0.1 # This is not a "version" number, do not change this line.
 phases:
   pre_build:
     commands:
-      - echo "Grabbing External Dependencies..."
-      - go get github.com/fatih/color
-      - go get github.com/bwmarrin/discordgo
-      - go get github.com/mattn/go-sqlite3
-      - echo "Moving files and changing directories."
-      - mkdir -p /usr/local/go/src/truebot-2.0
-      - mv * /usr/local/go/src/truebot-2.0/
-      - cd /usr/local/go/src/truebot-2.0
-      - pwd
-      - ls -alh ..
-      - ls -alh
-      - go build
-      - ls -alh
+      - echo "Running Prebuild Process..."
+      - ./scripts/pre_build.sh
   build:
     commands:
       - echo "Compiling..."
-      - sleep 10
+      - ./scripts/build.sh
   post_build:
     commands:
       - echo "Build completed on $(date)"
 artifacts:
   files:
-    - truebot
+    - truebot-2.0
     - appspec.yml
     - scripts/application_start.sh
     - scripts/before_install.sh
     - scripts/application_stop.sh
+  discard-paths: yes
