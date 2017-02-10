@@ -8,12 +8,14 @@ import(
 )
 
 func parseDate(date string) (string, time.Duration){
-    //1 week 5 days 1 hour 2 minutes 1 second
     compString := "weeks days hours minutes seconds"
     lookingForDates := true
     dateArgs := strings.Split(date," ")
     dateIndex := 0
     var parsedDuration time.Duration
+    if strings.HasPrefix(date, "in "){
+        date = strings.Replace(date, "in ", "", 1)
+    }
     for lookingForDates {
         if dateIndex >= len(dateArgs)-1{
             lookingForDates = false
@@ -50,7 +52,9 @@ func parseDate(date string) (string, time.Duration){
         return " ", parsedDuration
     }    
 }
-
-func init() {
+func addReminder(){
     
+}
+func init() {
+    fmt.Println("Don't forget to register on site for SGDQ 2017!")
 }
