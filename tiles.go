@@ -44,8 +44,9 @@ func tilesStart(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + ", there is currently a queue already started.  Use `!tiles check` to see who's in the queue.")
     return
   }
-  s.ChannelMessageSend(tilesID, "Hey <@276514629700681728>!" + "<@" + msg.Author.ID + ">" + " wants to start a hanchan! Type `!tiles join` to enter the queue.")
+  s.ChannelMessageSend(tilesID, "Hey <@&276514629700681728>! " + "<@" + msg.Author.ID + ">" + " wants to start a hanchan! Type `!tiles join` to enter the queue.")
 
+  q.started = true
   q.pName = append(q.pName, msg.Author.Username)
   q.pID = append(q.pID, msg.Author.ID)
 }
@@ -79,6 +80,9 @@ func tilesStandby(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 }
 
 func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
+  if msg.Author.ID != q.owner {
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID ">, you are not the owner of this queue. Ignoring.")
+  }
   if !q.started {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + ", there is no queue right now.  Type `!tiles start` to start one!")
     return
@@ -99,6 +103,10 @@ func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     }
   }
   s.ChannelMessageSend(tilesID, "<@" + q.owner + "> has summoned you to start the hanchan!")
+
+  q.started false
+  q.pID = q.pID[:0]
+  q.sID = q.sID[:0]
 }
 
 func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
@@ -107,7 +115,7 @@ func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 
 func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   if msg.Author.ID != q.owner {
-    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you do not have permission to clear the queue.")
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are not the owner of this queue. Ignoring.")
     return
   }
   s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, the queue has been cleared at your request.")
