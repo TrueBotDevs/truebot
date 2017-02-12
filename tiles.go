@@ -81,7 +81,7 @@ func tilesStandby(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 
 func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   if msg.Author.ID != q.owner {
-    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID ">, you are not the owner of this queue. Ignoring.")
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are not the owner of this queue. Ignoring.")
   }
   if !q.started {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + ", there is no queue right now.  Type `!tiles start` to start one!")
@@ -104,7 +104,7 @@ func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   }
   s.ChannelMessageSend(tilesID, "<@" + q.owner + "> has summoned you to start the hanchan!")
 
-  q.started false
+  q.started = false
   q.pID = q.pID[:0]
   q.sID = q.sID[:0]
 }
