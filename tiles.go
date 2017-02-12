@@ -94,7 +94,7 @@ func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     return
   }
 
-  // TODO: Make this a ready check style goroutine.
+  // TODO: Make this a ready check style goroutine, maybe?
   for i := 1; i < len(q.pID); i++ {
     s.ChannelMessageSend(tilesID, "Hey <@" + q.pID[i] + ">!")
   }
@@ -109,6 +109,7 @@ func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   q.started = false
   q.pID = q.pID[:0]
   q.sID = q.sID[:0]
+  q.owner = ""
 }
 
 func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
@@ -120,6 +121,9 @@ func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 }
 
 func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
+  if !q.started {
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue right now.  Type `!tiles start` to start one!")
+  }
   if msg.Author.ID != q.owner {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are not the owner of this queue. Ignoring.")
     return
@@ -127,6 +131,8 @@ func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, the queue has been cleared at your request.")
   q.pID = q.pID[:0]
   q.sID = q.sID[:0]
+  q.started = false
+  q.owner = ""
 }
 
 func tilesHelp(s *discordgo.Session, msg *discordgo.MessageCreate)  {
