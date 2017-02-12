@@ -57,9 +57,9 @@ func tilesJoin(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue right now.  Type `!tiles start` to start one!")
     return
   }
-  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you've been added to the queue!  Currently we have " + strconv.Itoa(len(q.pID)) + " players in the queue, and " + strconv.Itoa(len(q.sID)) + " standby players.")
   q.pName = append(q.pName, msg.Author.Username)
   q.pID = append(q.pID, msg.Author.ID)
+  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you've been added to the queue!  Currently we have " + strconv.Itoa(len(q.pID)) + " players in the queue, and " + strconv.Itoa(len(q.sID)) + " standby players.")
 
   if len(q.pID) + len(q.sID) >= 4 {
     s.ChannelMessageSend(tilesID, "<@" + q.owner + ">, you have enough players in queue and standby to play a hanchan.  Use `!tiles play` to ping players and clear the queue.")
@@ -71,9 +71,9 @@ func tilesStandby(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue right now.  Type `!tiles start` to start one!")
     return
   }
-  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you've been added to the standby queue!  Currently we have " + strconv.Itoa(len(q.pID)) + " players in the queue, and " + strconv.Itoa(len(q.sID)) + " standby players.")
   q.sName = append(q.sName, msg.Author.Username)
   q.sID = append(q.sID, msg.Author.ID)
+  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you've been added to the standby queue!  Currently we have " + strconv.Itoa(len(q.pID)) + " players in the queue, and " + strconv.Itoa(len(q.sID)) + " standby players.")
 
   if len(q.pID) + len(q.sID) >= 4 {
     s.ChannelMessageSend(tilesID, "<@" + q.owner + ">" + ", you have enough players in queue and standby to play a hanchan.  Use `!tiles play` to ping players and clear the queue.")
