@@ -49,6 +49,7 @@ func tilesStart(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   q.started = true
   q.pName = append(q.pName, msg.Author.Username)
   q.pID = append(q.pID, msg.Author.ID)
+  q.owner = msg.Author.ID
 }
 
 func tilesJoin(s *discordgo.Session, msg *discordgo.MessageCreate)  {
@@ -82,6 +83,7 @@ func tilesStandby(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   if msg.Author.ID != q.owner {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are not the owner of this queue. Ignoring.")
+    return
   }
   if !q.started {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + ", there is no queue right now.  Type `!tiles start` to start one!")
@@ -93,7 +95,7 @@ func tilesPlay(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   }
 
   // TODO: Make this a ready check style goroutine.
-  for i := 1; i <= len(q.pID); i++ {
+  for i := 1; i < len(q.pID); i++ {
     s.ChannelMessageSend(tilesID, "Hey <@" + q.pID[i] + ">!")
   }
   if len(q.pID) < 4 {
