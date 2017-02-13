@@ -136,7 +136,7 @@ func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 }
 
 func tilesHelp(s *discordgo.Session, msg *discordgo.MessageCreate)  {
-  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + "\n```Usage: !tiles [start|join|standby|play|check|clear|help]\n\n!tiles start - Start a new hanchan queue.\n!tiles join - Join a hanchan queue.\n!tiles standby - Join a hanchan queue as a standby.\n!tiles play - Pings all queued players and clears the queue.\n!tiles check - Checks for a currently queuing hanchan.\n!tiles clear - Clears the current hanchan queue. (game owner only)\n!tiles help - This text.```")
+  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + "\n```Usage: !tiles [start|join|standby|leave|play|check|clear|help]\n\n!tiles start - Start a new hanchan queue.\n!tiles join - Join the current queue.\n!tiles standby - Join a hanchan queue as a standby.\n!tiles leave - Leave the current queue.\n!tiles play - Pings all queued players and clears the queue.\n!tiles check - Checks for a currently queuing hanchan.\n!tiles clear - Clears the current hanchan queue. (game owner only)\n!tiles help - This text.```")
 }
 
 func init()  {
