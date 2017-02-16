@@ -61,13 +61,22 @@ func tilesJoin(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue to join!  Type `!tiles start` to start one!")
     return
   }
+  if q.owner == msg.Author.ID {
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are the owner of this queue, you can't join again!")
+  }
+  for i := 1; i <= len(q.pID); i++ {
+    if msg.Author.ID == q.pID[i] {
+      s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are already in the queue!")
+      return
+    }
+  }
   if len(q.pID) == 4 {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, the play queue is currently maxed out right now.  Not adding player.")
     return
   }
   q.pName = append(q.pName, msg.Author.Username)
   q.pID = append(q.pID, msg.Author.ID)
-  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you've been added to the queue!")
+  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you've been added to the queue!  There are " + strconv.Itoa(len(q.pID)) + " players in the queue.")
 
   if len(q.pID) == 4 {
     s.ChannelMessageSend(tilesID, "<@" + q.owner + ">, you have enough players in queue and standby to play a hanchan.  Use `!tiles play` to ping players and clear the queue.")
@@ -123,11 +132,12 @@ func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue to check!  Type `!tiles start` to start one!")
     return
   }
-  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, the following people are in the queue:")
+  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there are " + strconv.Itoa(len(q.pID)) + " players in the queue.")
+  s.ChannelMessageSend(msg.ChannelID, "The owner of this queue is: " + q.pName[0])
+  s.ChannelMessageSend(msg.ChannelID, "The following people are in the queue:")
   for i := 1; i < len(q.pID); i++ {
     s.ChannelMessageSend(msg.ChannelID, q.pName[i])
   }
-  s.ChannelMessageSend(msg.ChannelID, "There is a total of " + strconv.Itoa(len(q.pID)) + " players in the queue.")
 }
 
 func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
