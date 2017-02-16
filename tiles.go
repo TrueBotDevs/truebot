@@ -63,8 +63,9 @@ func tilesJoin(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   }
   if q.owner == msg.Author.ID {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are the owner of this queue, you can't join again!")
+    return
   }
-  for i := 1; i <= len(q.pID); i++ {
+  for i := 1; i < len(q.pID); i++ {
     if msg.Author.ID == q.pID[i] {
       s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are already in the queue!")
       return
