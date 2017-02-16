@@ -76,18 +76,18 @@ func tilesJoin(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 
 func tilesLeave(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   if !q.started {
-    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID ">, there is no queue to leave! Type `!tiles start` to start one!")
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue to leave! Type `!tiles start` to start one!")
     return
   }
   if q.owner == msg.Author.ID {
-    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID ">, logic for owner leaving is in the works.  Please clear the queue instead for the time being.")
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, logic for owner leaving is in the works.  Please clear the queue instead for the time being.")
     return
   }
   for i := 1; i < len(q.pID); i++ {
     if msg.Author.ID == q.pID[i] {
       q.pID = append(q.pID[:i], q.pID[i+1:]...)
       q.pName = append(q.pName[:i], q.pName[i+1:]...)
-      s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID ">, you have been removed from the queue.")
+      s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you have been removed from the queue.")
     }
   }
 }
@@ -125,7 +125,7 @@ func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   }
   s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, the following people are in the queue:")
   for i := 1; i < len(q.pID); i++ {
-    s.ChannelMessageSend(msg.ChannelID, q.sName[i])
+    s.ChannelMessageSend(msg.ChannelID, q.pName[i])
   }
   s.ChannelMessageSend(msg.ChannelID, "There is a total of " + strconv.Itoa(len(q.pID)) + " players in the queue.")
 }
@@ -133,6 +133,7 @@ func tilesCheck(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   if !q.started {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue to clear!  Type `!tiles start` to start one!")
+    return
   }
   if msg.Author.ID != q.owner {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are not the owner of this queue. Ignoring.")
