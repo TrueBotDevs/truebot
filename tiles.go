@@ -32,7 +32,7 @@ func tilesChooser(s *discordgo.Session, msg *discordgo.MessageCreate, arg string
     tilesCheck(s, msg)
   } else if arg == "clear" {
     tilesClear(s, msg)
-  } else if arg == "epeen" {
+  } else if arg == "1pin" {
     s.ChannelMessageSend(msg.ChannelID, "私の一筒!")
     return
   } else if arg == "[start|join|leave|play|check|clear|help]"{
