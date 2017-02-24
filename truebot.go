@@ -19,6 +19,9 @@ var (
     CmdList = map[string]interface{}{
         "quote" : getQuote,
     }
+    AliasList = map[string]interface{}{
+        "quote" : getQuote,
+    }
     db *sql.DB
 )
 
@@ -112,6 +115,8 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
         
         if CmdList[cmd] != nil{
             runInterface(CmdList[cmd],s,msg,arg)
+        }else if AliasList[cmd] !=nil{
+            runInterface(AliasList[cmd],s,msg,arg)
         }
     }
 }

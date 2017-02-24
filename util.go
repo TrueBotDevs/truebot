@@ -13,6 +13,7 @@ func copycat(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, msg.Content)
 }
 
+//This might want to go in the main file
 func grabArg(s string) (string,string){
     arg := strings.Split(s, " ")[0]
     remainder := " "
