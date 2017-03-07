@@ -25,6 +25,10 @@ func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg s
         delThis := del.LastMessageID
         s.ChannelMessageDelete(cmdsID, delThis)
     }
+    nextArg, _ := grabArg(arg)
+    if nextArg == "stealth"{
+        s.ChannelMessageDelete(msg.ChannelID,msg.ID)
+    }
 }
 
 func init() {
