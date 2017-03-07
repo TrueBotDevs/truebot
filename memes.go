@@ -3,6 +3,9 @@ package main
 import(
     "github.com/bwmarrin/discordgo"
 )
+var(
+    cmdsID = "246063490614165504"
+)
 
 func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     sender := msg.Author
@@ -17,10 +20,10 @@ func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg s
         }
     }
     if vChannel != nil{
-        s.ChannelMessageSend(msg.ChannelID,"<@83742858800009216> you have been pinged to " + vChannel.Name)
-        del, _ := s.Channel(msg.ChannelID)
+        s.ChannelMessageSend(cmdsID,"<@83742858800009216> you have been pinged to " + vChannel.Name)
+        del, _ := s.Channel(cmdsID)
         delThis := del.LastMessageID
-        s.ChannelMessageDelete(msg.ChannelID, delThis)
+        s.ChannelMessageDelete(cmdsID, delThis)
     }
 }
 
