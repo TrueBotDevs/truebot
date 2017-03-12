@@ -146,10 +146,6 @@ func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, there is no queue to clear!  Type `!tiles start` to start one!")
     return
   }
-  if msg.Author.ID != q.owner {
-    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you are not the owner of this queue. Ignoring.")
-    return
-  }
   s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, the queue has been cleared at your request.")
   q.pID = q.pID[:0]
   q.pName = q.pName[:0]
@@ -158,7 +154,7 @@ func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 }
 
 func tilesHelp(s *discordgo.Session, msg *discordgo.MessageCreate)  {
-  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + "\n```Usage: !tiles [start|join|leave|play|check|clear|help]\n\n!tiles start - Start a new hanchan queue.\n!tiles join - Join the current queue.\n!tiles leave - Leave the current queue.\n!tiles play - Pings all queued players and clears the queue.\n!tiles check - Checks for a currently queuing hanchan.\n!tiles clear - Clears the current hanchan queue. (game owner only)\n!tiles help - This text.```")
+  s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + "\n```Usage: !tiles [start|join|leave|play|check|clear|help]\n\n!tiles start - Start a new hanchan queue.\n!tiles join - Join the current queue.\n!tiles leave - Leave the current queue.\n!tiles play - Pings all queued players and clears the queue.\n!tiles check - Checks for a currently queuing hanchan.\n!tiles clear - Clears the current hanchan queue.\n!tiles help - This text.```")
 }
 
 func init()  {
