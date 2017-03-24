@@ -2,6 +2,8 @@ package main
 
 import(
     "github.com/bwmarrin/discordgo"
+    "math/rand"
+    "strconv"
 )
 var(
     cmdsID = "246063490614165504"
@@ -31,6 +33,11 @@ func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg s
     }
 }
 
+func imGay(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + "> is on " + strconv.Itoa(rand.Intn(10) - 5) + " levels of gay!")
+}
+
 func init() {
     CmdList["azorae"] = exclamationAzorae
+    CmdList["imgay"] = imGay
 }
