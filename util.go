@@ -13,6 +13,27 @@ func copycat(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, msg.Content)
 }
 
+func isLive(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    sender := msg.Author
+    channel, _ := s.Channel(msg.ChannelID)
+    guildID := channel.GuildID
+    guild, _ := s.Guild(guildID)
+    var vChannel *discordgo.Channel
+    var vID string
+    //Join the voice channel the sender is in
+    for _, state := range guild.VoiceStates{
+        if state.UserID == sender.ID{
+            vID = state.ChannelID
+            vChannel, _ = s.Channel(vID)
+        }
+    }
+    if(strings.Contains(vChannel.Name, "🔴 ")){
+        s.ChannelEdit(vID,strings.Replace(vChannel.Name, "🔴 ", "", 1))
+    }else{
+        s.ChannelEdit(vID, "🔴 " + vChannel.Name)
+    }
+}
+
 //This might want to go in the main file
 func grabArg(s string) (string,string){
     arg := strings.Split(s, " ")[0]
@@ -26,4 +47,5 @@ func grabArg(s string) (string,string){
 func init() {
     CmdList["ping"] = ping
     CmdList["copycat"] = copycat
+    CmdList["live"] = isLive
 }

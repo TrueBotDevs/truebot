@@ -7,6 +7,7 @@ import (
 
 var (
   tilesID = "270331769033588737"
+  vTilesID = "231272263389806602"
   q = Queue{}
 )
 
@@ -20,6 +21,7 @@ type Queue struct {
 
 // TODO: This should really be a switch statement, but fuck it.  I'll change it later.
 func tilesChooser(s *discordgo.Session, msg *discordgo.MessageCreate, arg string)  {
+  
   if arg == "start" {
     tilesStart(s, msg)
   } else if arg == "join" {
@@ -41,6 +43,7 @@ func tilesChooser(s *discordgo.Session, msg *discordgo.MessageCreate, arg string
   } else {
     tilesHelp(s, msg)
   }
+  tilesChannelUpdate(s)
 }
 
 func tilesStart(s *discordgo.Session, msg *discordgo.MessageCreate)  {
@@ -159,6 +162,21 @@ func tilesClear(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 
 func tilesHelp(s *discordgo.Session, msg *discordgo.MessageCreate)  {
   s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">" + "\n```Usage: !tiles [start|join|leave|play|check|clear|help]\n\n!tiles start - Start a new hanchan queue.\n!tiles join - Join the current queue.\n!tiles leave - Leave the current queue.\n!tiles play - Pings all queued players and clears the queue.\n!tiles check - Checks for a currently queuing hanchan.\n!tiles clear - Clears the current hanchan queue. (game owner only)\n!tiles help - This text.```")
+}
+
+func tilesChannelUpdate(s *discordgo.Session){
+  switch len(q.pID){
+    case 0:
+      s.ChannelEdit(vTilesID, "Meme Tiles")
+    case 1:
+      s.ChannelEdit(vTilesID, "🀙 Meme Tiles")
+    case 2:
+      s.ChannelEdit(vTilesID, "🀚 Meme Tiles")
+    case 3:
+      s.ChannelEdit(vTilesID, "🀛 Meme Tiles")
+    default:
+      s.ChannelEdit(vTilesID, "🀄 Meme Tiles")
+  }
 }
 
 func init()  {
