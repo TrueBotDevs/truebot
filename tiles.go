@@ -165,13 +165,13 @@ func tilesChannelUpdate(s *discordgo.Session){
     case 0:
       s.ChannelEdit(vTilesID, "Meme Tiles")
     case 1:
-      s.ChannelEdit(vTilesID, "🀙 Meme Tiles")
-    case 2:
-      s.ChannelEdit(vTilesID, "🀚 Meme Tiles")
-    case 3:
-      s.ChannelEdit(vTilesID, "🀛 Meme Tiles")
-    default:
       s.ChannelEdit(vTilesID, "🀄 Meme Tiles")
+    case 2:
+      s.ChannelEdit(vTilesID, "🀄🀄 Meme Tiles")
+    case 3:
+      s.ChannelEdit(vTilesID, "🀄🀄🀄 Meme Tiles")
+    default:
+      s.ChannelEdit(vTilesID, "🀄🀄🀄🀄 Meme Tiles")
   }
 }
 
