@@ -159,4 +159,5 @@ func tilesHelp(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 
 func init()  {
   CmdList["tiles"] = tilesChooser
+  CmdList["Tiles"] = tilesChooser
 }
