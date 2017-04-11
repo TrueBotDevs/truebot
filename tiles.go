@@ -177,4 +177,5 @@ func tilesChannelUpdate(s *discordgo.Session){
 
 func init()  {
   CmdList["tiles"] = tilesChooser
+  CmdList["Tiles"] = tilesChooser
 }
