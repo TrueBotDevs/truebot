@@ -20,6 +20,7 @@ phases:
       - go build
   post_build:
     commands:
+      - ls -R $GOPATH
       - echo "Build completed on $(date)"
 artifacts:
   files:
