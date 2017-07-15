@@ -50,12 +50,12 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
         if strings.Contains(quote, "<@"){
             s.ChannelMessageSend(msg.ChannelID, "Fuck you, don't @ people in quotes")
         }else{
-            newItem := "INSERT INTO quotes (quote) values (?)"
+            newItem := "INSERT INTO quotes (quote,submitter) values (?,?)"
             stmt, err := db.Prepare(newItem)
             if err != nil { panic(err) }
             defer stmt.Close()
 
-            _, err2 := stmt.Exec(quote)
+            _, err2 := stmt.Exec(quote,msg.Author.Username)
             if err2 != nil { panic(err2) }
             s.ChannelMessageSend(msg.ChannelID, "Added your quote to the database:```" + quote + "```")
         }
