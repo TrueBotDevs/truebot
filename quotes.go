@@ -17,7 +17,7 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     defer qte.Close()
     
     var quote string
-    var quotes [255]string
+    var quotes [10000]string
     var index = 0
     var newIndex = 1
     for qte.Next(){
@@ -46,7 +46,7 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
         s.ChannelMessageSend(msg.ChannelID,"Usage: !addquote <quote>")
     }else if quote == "<quote>"{
         s.ChannelMessageSend(msg.ChannelID,"Very funny Church")
-    }else{
+    }else if quote[0] == '"' && strings.Contains(quote, "\" - "){
         if strings.Contains(quote, "<@"){
             s.ChannelMessageSend(msg.ChannelID, "Fuck you, don't @ people in quotes")
         }else{
@@ -57,9 +57,15 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 
             _, err2 := stmt.Exec(quote)
             if err2 != nil { panic(err2) }
-            s.ChannelMessageSend(msg.ChannelID, quote + " Added to the database")
+            s.ChannelMessageSend(msg.ChannelID, "Added your quote to the database:```" + quote + "```")
         }
+    }else{
+        s.ChannelMessageSend(msg.ChannelID, "Quotes should be in the format:```\"The thing that was said\" - Username```")
     }
+}
+
+func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
+
 }
 
 func init() {
