@@ -16,7 +16,7 @@ phases:
       - echo "Build completed on $(date)"
 artifacts:
   files:
-    - /go/src/truebot-2.0/truebot-2.0
+    - truebot-2.0
     - appspec.yml
     - scripts/application_start.sh
     - scripts/before_install.sh
