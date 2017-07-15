@@ -20,11 +20,11 @@ phases:
       - go build
   post_build:
     commands:
-      - ls -R $GOPATH
+      - mv $GOPATH/src/truebot-2.0/truebot-2.0 /root/truebot-2.0
       - echo "Build completed on $(date)"
 artifacts:
   files:
-    - $GOPATH/src/truebot-2.0/truebot-2.0
+    - /root/truebot-2.0
     - appspec.yml
     - scripts/application_start.sh
     - scripts/before_install.sh
