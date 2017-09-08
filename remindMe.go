@@ -2,9 +2,16 @@ package main
 
 import(
     "fmt"
+    "log"
     "time"
     "strings"
     "strconv"
+	"github.com/bwmarrin/discordgo"
+)
+
+var(
+    //serverId = "82683153025601536"
+    channelId = "355504765305618432"
 )
 
 func parseDate(date string) (string, time.Duration){
@@ -44,6 +51,8 @@ func parseDate(date string) (string, time.Duration){
             parsedDuration += time.Duration(convertedInt)*time.Minute
         }else if strings.Contains("weeks",timeStr){
             parsedDuration += time.Duration(convertedInt*24*7)*time.Hour
+        }else if strings.Contains("years",timeStr){
+            parsedDuration += time.Duration(convertedInt*24*365)*time.Hour
         }
     }
     if dateIndex < len(dateArgs) {
@@ -52,9 +61,63 @@ func parseDate(date string) (string, time.Duration){
         return " ", parsedDuration
     }    
 }
-func addReminder(){
+func addReminder(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    remainderMsg, timeToWait := parseDate(arg)
     
+    newItem := "INSERT INTO reminders (reminder,date,userId) values (?,?,?)"
+    stmt, err := db.Prepare(newItem)
+    if err != nil { panic(err) }
+    defer stmt.Close()
+
+    remindDate := time.Now().Add(timeToWait)
+    _, err2 := stmt.Exec(remainderMsg,remindDate.Unix(),msg.Author.ID)
+    if err2 != nil { panic(err2) }
+    
+	s.ChannelMessageSend(msg.ChannelID, "Ok, <@" + msg.Author.ID + ">, I will remind you in " + timeToWait.String() + "```" + remainderMsg + "```")
+}
+func doRemind(){
+    for true{
+        if hasSession{
+            currentTime := strconv.FormatInt(time.Now().Unix(),10)
+            query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
+            qte, err := db.Query(query)
+            if err != nil {
+                log.Fatal("Query error:", err)
+            }
+            defer qte.Close()
+            
+            var rem string
+            var uId int
+            var reminderId int
+            var reminders [10000]string
+            var reminderIds [10000]int
+            var index = 0
+            for qte.Next(){
+                err = qte.Scan(&uId, &rem, &reminderId)
+                if err != nil {
+                    log.Fatal("Parse error:", err)
+                }
+                dgSession.ChannelMessageSend(channelId, "Hey <@" + strconv.Itoa(uId) + ">```" + rem + "```")
+                fmt.Println(rem)
+                reminders[index] = rem
+                reminderIds[index] = reminderId
+                index++
+            }
+            for i := 0; i < index; i++{
+                deleteCmd := "UPDATE reminders SET isDone = 1 WHERE reminderId = ?"
+                stmt, err2 := db.Prepare(deleteCmd)
+                if err2 != nil { panic(err2) }
+                defer stmt.Close()
+
+                _, err3 := stmt.Exec(reminderIds[i])
+                if err3 != nil { panic(err3) }
+                time.Sleep(1000 * time.Millisecond)
+            }
+        }
+    }
 }
 func init() {
     fmt.Println("Don't forget to register on site for SGDQ 2017!")
+	CmdList["remindme"] = addReminder
+    go doRemind()
 }

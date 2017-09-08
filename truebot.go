@@ -23,6 +23,8 @@ var (
         "quote" : getQuote,
     }
     db *sql.DB
+    dgSession *discordgo.Session
+    hasSession bool = false
 )
 
 func init() {
@@ -57,6 +59,8 @@ func main() {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
+    dgSession = dg
+    hasSession = true
 
 	// Get the account information.
 	u, err := dg.User("@me")
