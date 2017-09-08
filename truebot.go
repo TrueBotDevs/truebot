@@ -45,7 +45,6 @@ func init() {
     if err != nil { panic(err) }
     defer stmt.Close()
 
-    remindDate := time.Now().Add(timeToWait)
     _, err2 := stmt.Exec(1,1,1)
     if err2 != nil { panic(err2) }
     
