@@ -78,6 +78,14 @@ func addReminder(s *discordgo.Session, msg *discordgo.MessageCreate, arg string)
 func doRemind(){
     for true{
         if hasSession{
+            newItem := "CREATE TABLE `reminders`(`reminderId` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`reminder` TEXT,`isDone` INTEGER NOT NULL DEFAULT 0, `date` INTEGER NOT NULL, `userId`	INTEGER NOT NULL);"
+            stmt, err := db.Prepare(newItem)
+            if err != nil { panic(err) }
+            defer stmt.Close()
+
+            _, err2 := stmt.Exec()
+            if err2 != nil { panic(err2) }
+               
             currentTime := strconv.FormatInt(time.Now().Unix(),10)
             query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
             qte, err := db.Query(query)
