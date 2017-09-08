@@ -82,7 +82,7 @@ func doRemind(){
             query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
             qte, err := db.Query(query)
             if err != nil {
-                dgSession.ChannelMessageSend(channelId, "Shit's fucked")
+                dgSession.ChannelMessageSend(channelId, err.Error())
                 log.Fatal("Query error:", err)
             }
             defer qte.Close()
