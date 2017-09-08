@@ -82,6 +82,7 @@ func doRemind(){
             query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
             qte, err := db.Query(query)
             if err != nil {
+                dgSession.ChannelMessageSend(channelId, "Shit's fucked")
                 log.Fatal("Query error:", err)
             }
             defer qte.Close()
@@ -95,6 +96,7 @@ func doRemind(){
             for qte.Next(){
                 err = qte.Scan(&uId, &rem, &reminderId)
                 if err != nil {
+                    dgSession.ChannelMessageSend(channelId, "Shit's really fucked")
                     log.Fatal("Parse error:", err)
                 }
                 dgSession.ChannelMessageSend(channelId, "Hey <@" + strconv.Itoa(uId) + ">```" + rem + "```")
@@ -106,11 +108,15 @@ func doRemind(){
             for i := 0; i < index; i++{
                 deleteCmd := "UPDATE reminders SET isDone = 1 WHERE reminderId = ?"
                 stmt, err2 := db.Prepare(deleteCmd)
-                if err2 != nil { panic(err2) }
+                if err2 != nil { 
+                    dgSession.ChannelMessageSend(channelId, "Shit's kinda fucked")
+                    panic(err2) }
                 defer stmt.Close()
 
                 _, err3 := stmt.Exec(reminderIds[i])
-                if err3 != nil { panic(err3) }
+                if err3 != nil { panic(err3)
+                    dgSession.ChannelMessageSend(channelId, "Shit's super fucked")
+                }
                 time.Sleep(1000 * time.Millisecond)
             }
         }
@@ -118,6 +124,6 @@ func doRemind(){
 }
 func init() {
     fmt.Println("Don't forget to register on site for SGDQ 2017!")
-	//CmdList["remindme"] = addReminder
-    //go doRemind()
+	CmdList["remindme"] = addReminder
+    go doRemind()
 }
