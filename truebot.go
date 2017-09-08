@@ -39,14 +39,6 @@ func init() {
         log.Fatal("Failed to open database:", err)
 	}
 	//defer db.Close()
-
-    newItem := "INSERT INTO reminders (reminder,date,userId) values (?,?,?)"
-    stmt, err := db.Prepare(newItem)
-    if err != nil { panic(err) }
-    defer stmt.Close()
-
-    _, err2 := stmt.Exec(1,1,1)
-    if err2 != nil { panic(err2) }
     
     //Function mapping
 }
