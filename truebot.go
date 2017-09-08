@@ -39,15 +39,7 @@ func init() {
         log.Fatal("Failed to open database:", err)
 	}
 	//defer db.Close()
-    
-     deleteCmd := "CREATE TABLE `reminders` (`reminderId`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`reminder`	TEXT,`isDone`	INTEGER NOT NULL DEFAULT 0,`date`	INTEGER NOT NULL,`userId`	INTEGER NOT NULL);"
-     stmt, err2 := db.Prepare(deleteCmd)
-                if err2 != nil { panic(err2) }
-                defer stmt.Close()
 
-                _, err3 := stmt.Exec()
-                if err3 != nil { panic(err3) }
-    
     //Function mapping
 }
 
