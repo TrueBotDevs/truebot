@@ -15,7 +15,7 @@ var(
 )
 
 func parseDate(date string) (string, time.Duration){
-    compString := "weeks days hours minutes seconds"
+    compString := "weeks days hours minutes seconds years"
     lookingForDates := true
     dateArgs := strings.Split(date," ")
     dateIndex := 0
@@ -117,7 +117,7 @@ func doRemind(){
                 if err3 != nil { panic(err3)
                     dgSession.ChannelMessageSend(channelId, "Shit's super fucked")
                 }
-                time.Sleep(1000 * time.Millisecond)
+                time.Sleep(60000 * time.Millisecond)
             }
         }
     }
