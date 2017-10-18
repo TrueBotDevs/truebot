@@ -80,8 +80,8 @@ func misQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     userchoice = r1.Intn(usercount)
     fakeuser = fakeusers[userchoice]
     misquote = quotes[newIndex]
-    misquote = misquote[:strings.LastIndex(misquote, " ")]
-    misquote = misquote + " " + fakeuser
+    misquote = misquote[:strings.LastIndex(misquote, "-")]
+    misquote = misquote + "- " + fakeuser
     s.ChannelMessageSend(msg.ChannelID,misquote)
 
     //fmt.Println(quotes[newIndex])
