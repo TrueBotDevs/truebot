@@ -28,8 +28,11 @@ func joinGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
         case "pubg":
             s.GuildMemberRoleAdd(guildID,msg.Author.ID,"304049346846916608")
             s.ChannelMessageSend(msg.ChannelID, "You have joined PUBG!")
+        case "deceit":
+            s.GuildMemberRoleAdd(guildID,msg.Author.ID,"376550070029385749")
+            s.ChannelMessageSend(msg.ChannelID, "You have joined Deceit!")
         default:
-            s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG```")
+            s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit```")
     }
 }
 
@@ -56,8 +59,11 @@ func leaveGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
         case "pubg":
             s.GuildMemberRoleRemove(guildID,msg.Author.ID,"304049346846916608")
             s.ChannelMessageSend(msg.ChannelID, "You have left PUBG!")
+        case "deceit":
+            s.GuildMemberRoleRemove(guildID,msg.Author.ID,"376550070029385749")
+            s.ChannelMessageSend(msg.ChannelID, "You have left Deceit!")
         default:
-            s.ChannelMessageSend(msg.ChannelID, "I can remove you from the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG```")
+            s.ChannelMessageSend(msg.ChannelID, "I can remove you from the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit```")
     }
 }
 
