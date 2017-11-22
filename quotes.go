@@ -44,7 +44,7 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     s.ChannelMessageSend(msg.ChannelID,quotes[newIndex])
     fmt.Println(quotes[newIndex])
 }
-
+//Trooble sucks virgina
 //Cakebombs 10/17
 func misQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     qte, err := db.Query("SELECT quote FROM quotes WHERE quote LIKE \"%"+comp+"%\"")
