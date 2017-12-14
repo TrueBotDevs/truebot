@@ -32,6 +32,12 @@ func isLive(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     }else{
         s.ChannelEdit(vID, "🔴 " + vChannel.Name)
     }
+	
+	if(len(arg) == 1){
+		del, _ := s.Channel(msg.ChannelID)
+        delThis := del.LastMessageID
+        s.ChannelMessageDelete(msg.ChannelID, delThis)
+	}
 }
 
 //This might want to go in the main file
