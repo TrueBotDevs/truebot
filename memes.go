@@ -41,6 +41,10 @@ func dammitSlurpee(s *discordgo.Session, msg *discordgo.MessageCreate, arg strin
     s.ChannelMessageSend(msg.ChannelID, "$damnitSlurpee")
 }
 
+func funnyBecause(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    s.ChannelMessageSend(msg.ChannelID, "It's funny because it's true")
+}
+
 func gayScale(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, "The gay scale was created during AGDQ 2017 by ProGamingWithEd as a way to determine the skill of one's Mahjong play.  The scale ranges from -5 to 5 so as to give the highest levels of accuracy. The scale was later adopted by BGC, Inc. as a whole to determine the relative skill of any given action.")
 }
@@ -50,6 +54,7 @@ func init() {
     CmdList["gay"] = imGay
     CmdList["gayscale"] = gayScale
     CmdList["damnit"] = dammitSlurpee
+    CmdList["false"] = funnyBecause
     AliasList["imgay"] = imGay
     AliasList["iamgay"] = imGay
     AliasList["me"] = imGay
