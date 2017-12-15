@@ -6,6 +6,7 @@ import(
     "time"
     "math/rand"
     "strings"
+    "strconv"
     "github.com/bwmarrin/discordgo"
 ) 
 
@@ -256,6 +257,37 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
     }
 }
 
+func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
+    qte, err := db.Query("SELECT DISTINCT quotee, COUNT(quotee) AS CountOf FROM quotes GROUP BY quotee ORDER BY CountOf DESC, quotee ASC")
+    if err != nil {
+		log.Fatal("Query error:", err)
+	}
+    defer qte.Close()
+    
+    var quotee string
+    var quoteCount int
+    var quotees [10000]string
+    var quoteCounts [10000]int
+    var index = 0
+    
+    var outputTable = "BGC Quote Leaderboard\n```"
+    
+    for qte.Next(){
+        err = qte.Scan(&quotee, &quoteCount)
+        if err != nil {
+            log.Fatal("Parse error:", err)
+        }
+        quotees[index] = quotee
+        quoteCounts[index] = quoteCount
+        index++
+    }
+    for i:=0; i<index; i++{
+        outputTable += strconv.Itoa(quoteCounts[i]) + " - " + quotees[i] + "\n"
+    }
+    outputTable += "```"
+    s.ChannelMessageSend(msg.ChannelID,outputTable)
+}
+
 func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 
 }
@@ -264,5 +296,6 @@ func init() {
     //CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
+    CmdList["quoteLeaderboard"] = quoteLeaderboard
     //CmdList["fakequote"] = getFake
 }
