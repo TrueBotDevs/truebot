@@ -3,8 +3,8 @@ package main
 import(
     "fmt"
     "log"
-    "math/rand"
     "time"
+    "math/rand"
     "strings"
     "github.com/bwmarrin/discordgo"
 ) 
@@ -13,23 +13,46 @@ import(
 var fakeusers = [16]string{"Ed", "Cakebombs", "Kenos", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
 var usercount = 16
 
+func getQuoteParts(quote string)(string,string){
+    var parts []string
+    parts = strings.Split(quote,"\" - ")
+    if(len(parts) == 1){
+        parts = strings.Split(quote,"\"- ")
+    }
+    if(len(parts) == 1){
+        parts = strings.Split(quote,"\"-")
+    }
+    if(len(parts) == 1){
+        parts = strings.Split(quote,"\" -")
+    }
+    if(len(parts) == 1){
+        return "error", "error"
+    }
+    return strings.TrimPrefix(parts[0],"\""), parts[1] 
+}
+
+func makeQuoteFromParts(quoteText string,quotee string)(string){
+    return "\"" + quoteText + "\" - " + quotee
+}
+
 func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
-    qte, err := db.Query("SELECT quote FROM quotes WHERE quote LIKE \"%"+comp+"%\"")
+    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\"")
     if err != nil {
 		log.Fatal("Query error:", err)
 	}
     defer qte.Close()
     
-    var quote string
+    var quoteText string
+    var quotee string
     var quotes [10000]string
     var index = 0
     var newIndex = 1
     for qte.Next(){
-        err = qte.Scan(&quote)
+        err = qte.Scan(&quoteText, &quotee)
         if err != nil {
             log.Fatal("Parse error:", err)
         }
-        quotes[index] = quote
+        quotes[index] = makeQuoteFromParts(quoteText,quotee)
         index++
     }
     s1 := rand.NewSource(time.Now().UnixNano())
@@ -47,7 +70,7 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
 
 //Cakebombs 10/17
 func misQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
-    qte, err := db.Query("SELECT quote FROM quotes WHERE quote LIKE \"%"+comp+"%\"")
+    qte, err := db.Query("SELECT quote FROM quotes WHERE quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\"")
     if err != nil {
 		log.Fatal("Query error:", err)
 	}
@@ -210,22 +233,23 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
 
 
 func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
-    if quote == " "{
+    quoteText, quotee := getQuoteParts(quote)
+    if quoteText == " "{
         s.ChannelMessageSend(msg.ChannelID,"Usage: !addquote <quote>")
-    }else if quote == "<quote>"{
+    }else if quoteText == "<quote>"{
         s.ChannelMessageSend(msg.ChannelID,"Very funny Church")
-    }else if quote[0] == '"' && strings.Contains(quote, "\" - "){
+    }else if quoteText != "error"{
         if strings.Contains(quote, "<@"){
             s.ChannelMessageSend(msg.ChannelID, "Fuck you, don't @ people in quotes")
         }else{
-            newItem := "INSERT INTO quotes (quote,submitter) values (?,?)"
+            newItem := "INSERT INTO quotes (quote,quotee,submitter,date) values (?,?,?,?)"
             stmt, err := db.Prepare(newItem)
             if err != nil { panic(err) }
             defer stmt.Close()
 
-            _, err2 := stmt.Exec(quote,msg.Author.Username)
+            _, err2 := stmt.Exec(quoteText,quotee,msg.Author.Username,time.Now().Unix())
             if err2 != nil { panic(err2) }
-            s.ChannelMessageSend(msg.ChannelID, "Added your quote to the database:```" + quote + "```")
+            s.ChannelMessageSend(msg.ChannelID, "Added your quote to the database:```" + makeQuoteFromParts(quoteText,quotee) + "```")
         }
     }else{
         s.ChannelMessageSend(msg.ChannelID, "Quotes should be in the format:```\"The thing that was said\" - Username```")
@@ -237,8 +261,8 @@ func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote strin
 }
 
 func init() {
-    CmdList["misquote"] = misQuote
+    //CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
-    CmdList["fakequote"] = getFake
+    //CmdList["fakequote"] = getFake
 }
