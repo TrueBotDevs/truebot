@@ -13,6 +13,7 @@ import(
 
 var fakeusers = [16]string{"Ed", "Cakebombs", "Kenos", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
 var usercount = 16
+var defaultThreshold = 10
 
 func getQuoteParts(quote string)(string,string){
     var parts []string
@@ -101,15 +102,10 @@ func misQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
         return
     }
     newIndex = r1.Intn(index)
-    //fmt.Println(quotes)
-    //fmt.Println(quotes[newIndex])
-    //s.ChannelMessageSend(msg.ChannelID,quotes[newIndex])
 
     userchoice = r1.Intn(usercount)
     fakeuser = fakeusers[userchoice]
-    misquote = quotes[newIndex]
-    misquote = misquote[:strings.LastIndex(misquote, "-")]
-    misquote = misquote + "- " + fakeuser
+    misquote = makeQuoteFromParts(quotes[newIndex], fakeuser) 
     s.ChannelMessageSend(msg.ChannelID,misquote)
 
     //fmt.Println(quotes[newIndex])
@@ -258,7 +254,20 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 }
 
 func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
-    qte, err := db.Query("SELECT DISTINCT quotee, COUNT(quotee) AS CountOf FROM quotes GROUP BY quotee ORDER BY CountOf DESC, quotee ASC")
+	var threshold int
+	quote = strings.TrimSpace(quote)
+	if(len(quote) <= 1){
+		threshold = defaultThreshold
+	}else{
+	    thresh, err := strconv.Atoi(quote)
+		threshold = thresh
+		if err != nil {
+			threshold = defaultThreshold
+			s.ChannelMessageSend(msg.ChannelID,"Invalid Threshold")
+		}
+	}
+	fmt.Println(strconv.Itoa(threshold))
+    qte, err := db.Query("SELECT DISTINCT quotee, COUNT(quotee) AS CountOf FROM quotes GROUP BY quotee HAVING CountOf >= "+strconv.Itoa(threshold)+" ORDER BY CountOf DESC, quotee ASC ")
     if err != nil {
 		log.Fatal("Query error:", err)
 	}
@@ -293,9 +302,10 @@ func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote strin
 }
 
 func init() {
-    //CmdList["misquote"] = misQuote
+    CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
     CmdList["quoteLeaderboard"] = quoteLeaderboard
+	AliasList["qL"] = quoteLeaderboard
     //CmdList["fakequote"] = getFake
 }
