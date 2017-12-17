@@ -306,6 +306,6 @@ func init() {
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
     CmdList["quoteLeaderboard"] = quoteLeaderboard
-	AliasList["qL"] = quoteLeaderboard
+	AliasList["ql"] = quoteLeaderboard
     //CmdList["fakequote"] = getFake
 }
