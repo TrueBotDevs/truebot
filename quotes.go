@@ -138,7 +138,7 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
             log.Fatal("Parse error:", err)
         }
         
-        quote = quote[1:strings.LastIndex(quote, "\"")]
+        //quote = quote[1:strings.LastIndex(quote, "\"")]
         quotes[index] = quote
         index++
     }
@@ -307,5 +307,5 @@ func init() {
     CmdList["addquote"] = addQuote
     CmdList["quoteLeaderboard"] = quoteLeaderboard
 	AliasList["qL"] = quoteLeaderboard
-    //CmdList["fakequote"] = getFake
+    CmdList["fakequote"] = getFake
 }
