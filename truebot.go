@@ -25,6 +25,7 @@ var (
     db *sql.DB
     dgSession *discordgo.Session
     hasSession bool = false
+    botTestingChannel = "379073357401948162"
 )
 
 func init() {
@@ -83,6 +84,8 @@ func main() {
 	}
 
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
+    dgSession.ChannelMessageSend(botTestingChannel, "Bot is now running TODO: Add a changelog here?")
+    
 	<-make(chan struct{})
 	return
 }
