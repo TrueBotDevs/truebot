@@ -15,6 +15,7 @@ var fakeusers = [16]string{"Ed", "Cakebombs", "Kenos", "Oblivion", "TheTrooble",
 var usercount = 16
 var defaultThreshold = 10
 
+//Begin Helper Functions
 func getQuoteParts(quote string)(string,string){
     var parts []string
     parts = strings.Split(quote,"\" - ")
@@ -37,6 +38,15 @@ func makeQuoteFromParts(quoteText string,quotee string)(string){
     return "\"" + quoteText + "\" - " + quotee
 }
 
+func convertNameFromMap(name string)(string){
+    fmt.Println(strings.ToLower(name))
+    if(usermap[strings.ToLower(name)] != ""){
+        return usermap[strings.ToLower(name)]
+    }
+    return name
+}
+
+//End Helper Functions
 func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\"")
     if err != nil {
@@ -231,6 +241,7 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
 
 func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
     quoteText, quotee := getQuoteParts(quote)
+    quotee = convertNameFromMap(quotee)
     if quoteText == " "{
         s.ChannelMessageSend(msg.ChannelID,"Usage: !addquote <quote>")
     }else if quoteText == "<quote>"{
