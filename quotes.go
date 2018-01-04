@@ -267,7 +267,7 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 	var threshold int
 	quote = strings.TrimSpace(quote)
-	if(len(quote) <= 1){
+	if(len(quote) < 1){
 		threshold = defaultThreshold
 	}else{
 	    thresh, err := strconv.Atoi(quote)
