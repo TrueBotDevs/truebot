@@ -36,6 +36,9 @@ func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg s
 func imGay(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + ">, you're a " + strconv.Itoa(rand.Intn(10) - 5) + " on the gay scale!")
 }
+func ihop(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    s.ChannelMessageSend(msg.ChannelID, "I'm down")
+}
 
 func dammitSlurpee(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, "$damnitSlurpee")
@@ -60,10 +63,13 @@ func init() {
     CmdList["damnit"] = dammitSlurpee
     CmdList["false"] = funnyBecause
     CmdList["true"] = thatsImpossible
+	CmdList["ihop"] = ihop
     AliasList["imgay"] = imGay
     AliasList["iamgay"] = imGay
     AliasList["me"] = imGay
     AliasList["greyscale"] = gayScale
     AliasList["grayscale"] = gayScale
     AliasList["dammit"] = dammitSlurpee
+	AliasList["Ihop"] = ihop
+	AliasList["Ihop"] = ihop
 }
