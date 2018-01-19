@@ -18,20 +18,37 @@ var defaultThreshold = 10
 //Begin Helper Functions
 func getQuoteParts(quote string)(string,string){
     var parts []string
-    parts = strings.Split(quote,"\" - ")
-    if(len(parts) == 1){
-        parts = strings.Split(quote,"\"- ")
-    }
-    if(len(parts) == 1){
-        parts = strings.Split(quote,"\"-")
-    }
-    if(len(parts) == 1){
-        parts = strings.Split(quote,"\" -")
-    }
-    if(len(parts) == 1){
-        return "error", "error"
-    }
-    return strings.TrimPrefix(parts[0],"\""), parts[1] 
+	if(strings.Contains(quote,"“")){
+		quote = strings.TrimLeft(quote,"“")
+		parts = strings.Split(quote,"” - ")
+		if(len(parts) == 1){
+			parts = strings.Split(quote,"”- ")
+		}
+		if(len(parts) == 1){
+			parts = strings.Split(quote,"”-")
+		}
+		if(len(parts) == 1){
+			parts = strings.Split(quote,"” -")
+		}
+		if(len(parts) == 1){
+			return "error", "error"
+		}	
+	}else{
+		parts = strings.Split(quote,"\" - ")
+		if(len(parts) == 1){
+			parts = strings.Split(quote,"\"- ")
+		}
+		if(len(parts) == 1){
+			parts = strings.Split(quote,"\"-")
+		}
+		if(len(parts) == 1){
+			parts = strings.Split(quote,"\" -")
+		}
+		if(len(parts) == 1){
+			return "error", "error"
+		}
+	}
+		return strings.TrimPrefix(parts[0],"\""), parts[1] 
 }
 
 func makeQuoteFromParts(quoteText string,quotee string)(string){
