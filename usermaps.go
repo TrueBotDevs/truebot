@@ -15,4 +15,6 @@ var usermap = map[string]string{
     "fearfulferret" : "FearfulFerret",
     "your name" : "your name here",
     "kirkq" : "Kirkq",
+    "zach" : "Zach",
+    "zachsk" : "Zach",
 }
