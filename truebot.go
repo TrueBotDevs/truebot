@@ -27,7 +27,7 @@ var (
     hasSession bool = false
     botTestingChannel = "379073357401948162"
 )
-
+//hm
 func init() {
     flag.StringVar(&Token, "t", "", "Bot Token")
     flag.Parse()
