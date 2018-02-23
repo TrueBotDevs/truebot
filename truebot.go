@@ -114,7 +114,7 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
     fmt.Fprintf(color.Output, "(%.5s) %s: %s\n", channel.Name, cyan(msg.Author.Username), msg.Content)
     
     //Check for commands
-    if msg.Content[:1] == "!"{
+    if (msg.Content[:1] == "!"||msg.Content[:1] == "."){
         cmd := strings.Split(msg.Content, " ")[0][1:]
         var arg = " "
         if len(msg.Content) > len(cmd)+1{
