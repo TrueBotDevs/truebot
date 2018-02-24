@@ -3,7 +3,6 @@ package main
 var usermap = map[string]string{
     "trooble" : "TheTrooble",
     "thetrooble" : "TheTrooble",
-    "cakebombs" : "Cake",
     "cake" : "Cake",
     "cake_" : "Cake",
     "cakebombs" : "Cake",
