@@ -91,8 +91,6 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
         return
     }
     newIndex = r1.Intn(index)
-    //fmt.Println(quotes)
-    //fmt.Println(quotes[newIndex])
     s.ChannelMessageSend(msg.ChannelID,quotes[newIndex])
     fmt.Println(quotes[newIndex])
 }
@@ -281,6 +279,38 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
     }
 }
 
+func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string){
+    qte, err := db.Query("SELECT quote, id FROM quotes WHERE quotee = \""+user+"\"")
+    if err != nil {
+		log.Fatal("Query error:", err)
+	}
+    defer qte.Close()
+    
+    var quoteText string
+    var quoteid string
+    var quoteLists [10000]string
+    var index = 0
+    startString := "```"
+    endString := "```"
+    for qte.Next(){
+        err = qte.Scan(&quoteText, &quoteid)
+        if err != nil {
+            log.Fatal("Parse error:", err)
+        }
+        if(len(quoteLists[index]) + len(quoteText) > 950){
+            quoteLists[index] += endString
+            index++
+            quoteLists[index] += startString
+        }
+        quoteLists[index] += quoteid + " - " + quoteText
+    }
+    quoteLists[index] += endString //TODO check if this is already here
+    s.ChannelMessageSend(msg.ChannelID,"Quotes for " + user + ":")
+    for i:=0; i<=index; i++ {
+        s.ChannelMessageSend(msg.ChannelID,quoteLists[i])
+    }
+}
+
 func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 	var threshold int
 	quote = strings.TrimSpace(quote)
@@ -333,6 +363,7 @@ func init() {
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
+    CmdList["listquotes"] = myQuotes
     CmdList["quoteLeaderboard"] = quoteLeaderboard
 	AliasList["ql"] = quoteLeaderboard
     CmdList["fakequote"] = getFake
