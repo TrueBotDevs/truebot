@@ -12,6 +12,7 @@ import(
 var(
     //serverId = "82683153025601536"
     channelId = "379073357401948162"
+	finished = true
 )
 
 func parseDate(date string) (string, time.Duration){
@@ -74,6 +75,11 @@ func addReminder(s *discordgo.Session, msg *discordgo.MessageCreate, arg string)
     if err2 != nil { panic(err2) }
     
 	s.ChannelMessageSend(msg.ChannelID, "Ok, <@" + msg.Author.ID + ">, I will remind you in " + timeToWait.String() + "```" + remainderMsg + "```")
+	
+	if(finished == true){
+		finished = false
+		go doRemind()
+	}
 }
 
 func doRemind(){
@@ -119,6 +125,27 @@ func doRemind(){
                     dgSession.ChannelMessageSend(channelId, "Shit's super fucked")
                 }    
             }
+			query = "SELECT COUNT(isDone) FROM reminders WHERE isDone = 0;"
+			
+			qte, err4 := db.Query(query)
+            if err4 != nil {
+                dgSession.ChannelMessageSend(channelId, err4.Error())
+                log.Fatal("Query error:", err4)
+            }
+            defer qte.Close()
+			
+			count := 0
+			for qte.Next(){
+                err = qte.Scan(&count)
+                if err != nil {
+                    dgSession.ChannelMessageSend(channelId, "Shit's really fucked")
+                    log.Fatal("Parse error:", err)
+                }
+            }
+			if(count <=0){
+				finished = true
+				break
+			}
 			time.Sleep(1000 * time.Millisecond)
         }
     }
@@ -126,5 +153,4 @@ func doRemind(){
 func init() {
     fmt.Println("Don't forget to register on site for SGDQ 2018!")
 	CmdList["remindme"] = addReminder
-    go doRemind()
 }
