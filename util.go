@@ -9,8 +9,17 @@ func ping(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, "Pong!")
 }
 
+func pong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    s.ChannelMessageSend(msg.ChannelID, "Ping!")
+}
+
 func copycat(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, msg.Content)
+}
+
+func say(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    channel, msg := grabArg(arg)
+    dgSession.ChannelMessageSend(channel, arg)
 }
 
 func isLive(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
@@ -52,6 +61,8 @@ func grabArg(s string) (string,string){
 
 func init() {
     CmdList["ping"] = ping
+    CmdList["pong"] = pong
+    CmdList["say"] = say
     CmdList["copycat"] = copycat
     CmdList["live"] = isLive
 }
