@@ -55,7 +55,8 @@ func runInterface(fn interface{},s *discordgo.Session, msg *discordgo.MessageCre
     v.Call(rarg)
 }
 
-func main() {    
+func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())    
     // Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New("Bot " + Token)
 	if err != nil {

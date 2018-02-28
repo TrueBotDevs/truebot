@@ -126,6 +126,6 @@ func doRemind(){
 }
 func init() {
     fmt.Println("Don't forget to register on site for SGDQ 2018!")
-	//CmdList["remindme"] = addReminder
-    //go doRemind()
+	CmdList["remindme"] = addReminder
+    go doRemind()
 }
