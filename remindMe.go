@@ -11,7 +11,7 @@ import(
 
 var(
     //serverId = "82683153025601536"
-    channelId = "355504765305618432"
+    channelId = "379073357401948162"
 )
 
 func parseDate(date string) (string, time.Duration){
@@ -24,7 +24,7 @@ func parseDate(date string) (string, time.Duration){
         date = strings.Replace(date, "in ", "", 1)
     }
     for lookingForDates {
-        if dateIndex >= len(dateArgs)-1{
+        if dateIndex >= len(dateArgs)-2{
             lookingForDates = false
             break
         }
@@ -75,6 +75,7 @@ func addReminder(s *discordgo.Session, msg *discordgo.MessageCreate, arg string)
     
 	s.ChannelMessageSend(msg.ChannelID, "Ok, <@" + msg.Author.ID + ">, I will remind you in " + timeToWait.String() + "```" + remainderMsg + "```")
 }
+
 func doRemind(){
     for true{
         if hasSession{               
@@ -116,14 +117,15 @@ func doRemind(){
                 _, err3 := stmt.Exec(reminderIds[i])
                 if err3 != nil { panic(err3)
                     dgSession.ChannelMessageSend(channelId, "Shit's super fucked")
-                }
-                time.Sleep(60000 * time.Millisecond)
+                }    
+				time.Sleep(1000 * time.Millisecond)
             }
+			
         }
     }
 }
 func init() {
     fmt.Println("Don't forget to register on site for SGDQ 2018!")
-	//CmdList["remindme"] = addReminder
-   // go doRemind()
+	CmdList["remindme"] = addReminder
+    go doRemind()
 }
