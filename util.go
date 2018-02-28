@@ -18,8 +18,8 @@ func copycat(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 }
 
 func say(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
-    channel, msg := grabArg(arg)
-    dgSession.ChannelMessageSend(channel, arg)
+    channel, message := grabArg(arg)
+    dgSession.ChannelMessageSend(channel, message)
 }
 
 func isLive(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
