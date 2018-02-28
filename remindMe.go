@@ -118,9 +118,8 @@ func doRemind(){
                 if err3 != nil { panic(err3)
                     dgSession.ChannelMessageSend(channelId, "Shit's super fucked")
                 }    
-				time.Sleep(1000 * time.Millisecond)
             }
-			
+			time.Sleep(1000 * time.Millisecond)
         }
     }
 }
