@@ -253,7 +253,6 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
 }
 
 
-
 func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
     quoteText, quotee := getQuoteParts(quote)
     quotee = convertNameFromMap(quotee)
@@ -279,7 +278,14 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
     }
 }
 
+
 func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string){
+    channel, _ := s.Channel(msg.ChannelID)
+    if channel.ChannelType != ChannelTypeDM{
+        s.ChannelMessageSend(msg.ChannelID, "To prevent flooding this command can only be used in DMs")
+        return
+    } 
+    user = convertNameFromMap(user)
     qte, err := db.Query("SELECT quote, id FROM quotes WHERE quotee = \""+user+"\"")
     if err != nil {
 		log.Fatal("Query error:", err)
@@ -311,6 +317,7 @@ func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string){
         s.ChannelMessageSend(msg.ChannelID,quoteLists[i])
     }
 }
+
 
 func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 	var threshold int
@@ -356,14 +363,17 @@ func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote 
     s.ChannelMessageSend(msg.ChannelID,outputTable)
 }
 
+
 func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 
 }
+
 
 func init() {
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
+    CmdList["quotelist"] = myQuotes
     CmdList["listquotes"] = myQuotes
     CmdList["quoteLeaderboard"] = quoteLeaderboard
 	AliasList["ql"] = quoteLeaderboard
