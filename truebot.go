@@ -122,7 +122,7 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
         var arg = " "
         if len(msg.Content) > len(cmd)+1{
             arg = strings.Replace(msg.Content, "!" + cmd + " ", "", 1)
-			arg = strings.Replace(msg.Content, "." + cmd + " ", "", 1)
+			arg = strings.Replace(arg, "." + cmd + " ", "", 1)
         }
         
         if CmdList[cmd] != nil{
