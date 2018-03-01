@@ -292,6 +292,7 @@ func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string){
     var index = 0
     startString := "```"
     endString := "```"
+    quoteLists[index] += startString
     for qte.Next(){
         err = qte.Scan(&quoteText, &quoteid)
         if err != nil {
@@ -302,7 +303,7 @@ func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string){
             index++
             quoteLists[index] += startString
         }
-        quoteLists[index] += quoteid + " - " + quoteText
+        quoteLists[index] += quoteid + " - " + quoteText + "\n"
     }
     quoteLists[index] += endString //TODO check if this is already here
     s.ChannelMessageSend(msg.ChannelID,"Quotes for " + user + ":")
