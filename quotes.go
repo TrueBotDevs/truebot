@@ -11,7 +11,7 @@ import(
 ) 
 
 
-var fakeusers = [16]string{"Ed", "Cakebombs", "Kenos", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
+var fakeusers = [16]string{"Ed", "Cakebombs", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
 var usercount = 16
 var defaultThreshold = 10
 
@@ -281,7 +281,7 @@ func addQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
 
 func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string){
     channel, _ := s.Channel(msg.ChannelID)
-    if channel.ChannelType != ChannelTypeDM{
+    if channel.Type != discordgo.ChannelTypeDM{
         s.ChannelMessageSend(msg.ChannelID, "To prevent flooding this command can only be used in DMs")
         return
     } 
