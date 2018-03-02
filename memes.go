@@ -56,6 +56,12 @@ func gayScale(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
     s.ChannelMessageSend(msg.ChannelID, "The gay scale was created during AGDQ 2017 by ProGamingWithEd as a way to determine the skill of one's Mahjong play.  The scale ranges from -5 to 5 so as to give the highest levels of accuracy. The scale was later adopted by BGC, Inc. as a whole to determine the relative skill of any given action.")
 }
 
+func dotDone(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+    index := rand.Intn(7)
+    timeString := []string{"00:05.51", "2:11:18", "4:21:09", "03:12.40", "18:39", "47:35", "13:37.69"}
+    s.ChannelMessageSend(msg.ChannelID, "<@" + msg.Author.ID + "> completed their run in " + timeString[index] + "!")
+}
+
 func init() {
     CmdList["azorae"] = exclamationAzorae
     CmdList["gay"] = imGay
@@ -64,6 +70,7 @@ func init() {
     CmdList["false"] = funnyBecause
     CmdList["true"] = thatsImpossible
 	CmdList["ihop"] = ihop
+    CmdList["done"] = dotDone
     AliasList["imgay"] = imGay
     AliasList["iamgay"] = imGay
     AliasList["me"] = imGay
