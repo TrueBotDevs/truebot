@@ -5,6 +5,7 @@ import(
 	"io"
 	"fmt"
 	//"time"
+	"strconv"
 	"github.com/jonas747/dca"
 	"github.com/rylio/ytdl"
 )
@@ -26,14 +27,12 @@ func checkSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 		s.ChannelMessageSend(msg.ChannelID,"Video not found")
 	}else{
 		song := Song{msg,s,arg,}
-		/*if(len(songs) > 0){
-			songs = songs[0 : len(songs)]
-		}else{
-			songs = make([]Song,1)
-		}*/
 		songs = append(songs, song)
-		fmt.Println(len(songs))
-		//songs[len(songs)-1] = song
+		//fmt.Println(len(songs))
+		
+		if len(songs) > 1{
+			s.ChannelMessageSend(strconv.Itoa(246063490614165504),"```Your song is currently number " + strconv.Itoa(len(songs)) + " in the queue.```")
+		}
 	}
 	if(songsFinished == true){
 		songsFinished = false;
@@ -76,7 +75,8 @@ func playSong(){
 			}
 			//notify of voice channel
 			if vChannel != nil{
-				s.ChannelMessageSend(msg.ChannelID,"You are in " + vChannel.Name + ", the play command is under development")
+				s.ChannelMessageSend(strconv.Itoa(246063490614165504),"```Playing in: " + vChannel.Name + "\nSong: " + videoInfo.Title + "\nRequested by: " + msg.Author.Username + "```")
+				//s.ChannelMessageSend(msg.ChannelID,"You are in " + vChannel.Name + ", the play command is under development")
 				vc, _ = s.ChannelVoiceJoin(guildID, vID, false, false)
 			}else{
 				s.ChannelMessageSend(msg.ChannelID,"You are not in a voice channel, the play command is under development")
@@ -146,7 +146,9 @@ func skipSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 	
 	if vc != nil{
 		vc.Disconnect()
-		vc, _ = s.ChannelVoiceJoin(guildID, vID, false, false)
+		if len(songs) != 0{
+			vc, _ = s.ChannelVoiceJoin(guildID, vID, false, false)
+		}
 	}
 }
 		
@@ -171,7 +173,7 @@ func songInfo(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 		// Handle the error
 	}else{
 		songName := videoInfo.Title
-		s.ChannelMessageSend(msg.ChannelID,"Song: " + songName + "\nRequested by: " + msg1.Author.Username)
+		s.ChannelMessageSend(msg.ChannelID,"```Song: " + songName + "\nRequested by: " + msg1.Author.Username + "```")
 	}
 	
 }
@@ -181,6 +183,7 @@ func init() {
     CmdList["play"] = checkSong
     AliasList["queue"] = checkSong
 	AliasList["songrequest"] = checkSong
+	AliasList["songtest"] = checkSong
 	CmdList["skip"] = skipSong
     CmdList["stop"] = stopMusic
     AliasList["stahp"] = stopMusic
