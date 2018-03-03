@@ -4,15 +4,24 @@ import(
     "github.com/bwmarrin/discordgo"
 	"io"
 	"fmt"
-	//"time"
 	"strconv"
+	"strings"
 	"github.com/jonas747/dca"
 	"github.com/rylio/ytdl"
+	"flag"
+    "log"
+    "net/http"
+	
+	"google.golang.org/api/googleapi/transport"
+	"google.golang.org/api/youtube/v3"
 )
 
 var vc *discordgo.VoiceConnection
 var songs = make([]Song,0)
 var songsFinished = true
+
+var maxResults = flag.Int64("max-results", 25, "Max YouTube results")
+const developerKey = "AIzaSyAUEeycj82Q3L7A7XB13krkgS0mdmVB3ss"
 
 type Song struct{
 	
@@ -22,22 +31,37 @@ type Song struct{
 }
 
 func checkSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
-	_, err := ytdl.GetVideoInfo(arg)
-	if err != nil {
+	arg = strings.TrimSpace(arg)
+	var vid string
+	var vid2 string
+	
+	if arg != ""{
+		vid = ytSearch(s,msg,arg)
+		vid2 = "https://www.youtube.com/watch?v=" + vid
+		fmt.Println("ID= " + vid2)
+
+	}else{
+		vid = ""
+	}
+	
+	_, err := ytdl.GetVideoInfo(vid2)
+	if err != nil || vid == ""{
 		s.ChannelMessageSend(msg.ChannelID,"Video not found")
 	}else{
-		song := Song{msg,s,arg,}
+		song := Song{msg,s,vid2,}
 		songs = append(songs, song)
 		//fmt.Println(len(songs))
 		
 		if len(songs) > 1{
 			s.ChannelMessageSend(strconv.Itoa(246063490614165504),"```Your song is currently number " + strconv.Itoa(len(songs)) + " in the queue.```")
 		}
+		if(songsFinished == true){
+			songsFinished = false;
+			go playSong();
+		}
 	}
-	if(songsFinished == true){
-		songsFinished = false;
-		go playSong();
-	}
+
+
 }
 
 func playSong(){
@@ -96,7 +120,7 @@ func playSong(){
 			options.Application = "lowdelay"
 			options.Volume = 100
 
-
+			fmt.Println(arg)
 			format := videoInfo.Formats.Extremes(ytdl.FormatAudioBitrateKey, true)[0]
 			downloadURL, err := videoInfo.GetDownloadURL(format)
 			if err != nil {
@@ -180,12 +204,57 @@ func songInfo(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 		s.ChannelMessageSend(msg.ChannelID,"```Not Currently Playing```")
 	}
 }
+
+func ytSearch(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) string {
+		var vids = make([]string,0)
+		
+        flag.Parse()
+
+        client := &http.Client{
+                Transport: &transport.APIKey{Key: developerKey},
+        }
+
+        service, err := youtube.New(client)
+        if err != nil {
+                log.Fatalf("Error creating new YouTube client: %v", err)
+        }
+
+        // Make the API call to YouTube.
+        call := service.Search.List("id,snippet").
+                Q(arg).
+                MaxResults(*maxResults)
+        response, err := call.Do()
+        if err != nil {
+                log.Fatalf("Error making search API call: %v", err)
+        }
+
+        // Iterate through each item and add it to the correct list.
+        for _, item := range response.Items {
+                switch item.Id.Kind {
+                case "youtube#video":
+						vids = append(vids,item.Id.VideoId)
+                        //videos[item.Id.VideoId] = item.Snippet.Title
+                }
+        }
+		
+		//fmt.Println(strconv.Itoa(len(vids)) + " " + vids[0])
+
+		
+		if len(vids)>0{
+			return vids[0]
+		}else{
+			return ""
+		}
+}
+
 func init() {
 	CmdList["songinfo"] = songInfo
 	AliasList["current"] = songInfo
     CmdList["play"] = checkSong
     AliasList["queue"] = checkSong
 	AliasList["songrequest"] = checkSong
+	AliasList["searchtest"] = checkSong
+	//CmdList["searchtest"] = ytSearch
 	CmdList["skip"] = skipSong
     CmdList["stop"] = stopMusic
     AliasList["stahp"] = stopMusic
