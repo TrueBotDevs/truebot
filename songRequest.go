@@ -75,7 +75,7 @@ func playSong(){
 			}
 			//notify of voice channel
 			if vChannel != nil{
-				s.ChannelMessageSend(strconv.Itoa(246063490614165504),"```Playing in: " + vChannel.Name + "\nSong: " + videoInfo.Title + "\nRequested by: " + msg.Author.Username + "```")
+				s.ChannelMessageSend(strconv.Itoa(246063490614165504),"```Playing in: " + vChannel.Name + "\nSong: " + videoInfo.Title + "\nLength: " + videoInfo.Duration.String() + "\nRequested by: " + msg.Author.Username + "```")
 				//s.ChannelMessageSend(msg.ChannelID,"You are in " + vChannel.Name + ", the play command is under development")
 				vc, _ = s.ChannelVoiceJoin(guildID, vID, false, false)
 			}else{
@@ -174,7 +174,7 @@ func songInfo(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 			// Handle the error
 		}else{
 			songName := videoInfo.Title
-			s.ChannelMessageSend(msg.ChannelID,"```Song: " + songName + "\nRequested by: " + msg1.Author.Username + "```")
+			s.ChannelMessageSend(msg.ChannelID,"```Song: " + songName + "\nLength: " + videoInfo.Duration.String() + "\nRequested by: " + msg1.Author.Username + "```")
 		}
 	}else{
 		s.ChannelMessageSend(msg.ChannelID,"```Not Currently Playing```")
@@ -186,7 +186,6 @@ func init() {
     CmdList["play"] = checkSong
     AliasList["queue"] = checkSong
 	AliasList["songrequest"] = checkSong
-	AliasList["songtest"] = checkSong
 	CmdList["skip"] = skipSong
     CmdList["stop"] = stopMusic
     AliasList["stahp"] = stopMusic
