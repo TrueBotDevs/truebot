@@ -163,19 +163,22 @@ func stopMusic(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 }
 
 func songInfo(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
-	song := songs[0]
-	msg1 := song.Message
-	arg1 := song.Arg
+	if vc != nil{
+		song := songs[0]
+		msg1 := song.Message
+		arg1 := song.Arg
 	
-	videoInfo, err := ytdl.GetVideoInfo(arg1)
-	if err != nil {
-		s.ChannelMessageSend(msg.ChannelID,"Video not found")
-		// Handle the error
+		videoInfo, err := ytdl.GetVideoInfo(arg1)
+		if err != nil {
+			s.ChannelMessageSend(msg.ChannelID,"Video not found")
+			// Handle the error
+		}else{
+			songName := videoInfo.Title
+			s.ChannelMessageSend(msg.ChannelID,"```Song: " + songName + "\nRequested by: " + msg1.Author.Username + "```")
+		}
 	}else{
-		songName := videoInfo.Title
-		s.ChannelMessageSend(msg.ChannelID,"```Song: " + songName + "\nRequested by: " + msg1.Author.Username + "```")
+		s.ChannelMessageSend(msg.ChannelID,"```Not Currently Playing```")
 	}
-	
 }
 func init() {
 	CmdList["songinfo"] = songInfo
