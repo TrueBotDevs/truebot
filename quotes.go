@@ -8,10 +8,11 @@ import(
     "strings"
     "strconv"
     "github.com/bwmarrin/discordgo"
+	"regexp"
 ) 
 
 
-var fakeusers = [16]string{"Ed", "Cakebombs", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
+var fakeusers = [16]string{"Ed", "Cake", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
 var usercount = 16
 var defaultThreshold = 10
 
@@ -95,37 +96,6 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     fmt.Println(quotes[newIndex])
 }
 
-func getQuoteByID(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
-    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp)
-    if err != nil {
-		log.Fatal("Query error:", err)
-	}
-    defer qte.Close()
-    
-    var quoteText string
-    var quotee string
-    var quotes [10000]string
-    var index = 0
-    var newIndex = 1
-    for qte.Next(){
-        err = qte.Scan(&quoteText, &quotee)
-        if err != nil {
-            log.Fatal("Parse error:", err)
-        }
-        quotes[index] = makeQuoteFromParts(quoteText,quotee)
-        index++
-    }
-    s1 := rand.NewSource(time.Now().UnixNano())
-    r1 := rand.New(s1)
-    if index == 0{
-        getQuote(s,msg," ")
-        return
-    }
-    newIndex = r1.Intn(index)
-    s.ChannelMessageSend(msg.ChannelID,quotes[newIndex])
-    fmt.Println(quotes[newIndex])
-}
-
 //Cakebombs 10/17
 func misQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     qte, err := db.Query("SELECT quote FROM quotes WHERE quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\"")
@@ -174,7 +144,7 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     var quoteArray []string
     const MaxLen = 20;
 	var count int
-
+	
     mapping = make(map[string][]string, 10000)
 
     qte, err := db.Query("SELECT quote FROM quotes")
@@ -201,8 +171,15 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
 
 
     for i := 0; i<len(quotes); i++{
+		reg, err := regexp.Compile("[^a-zA-Z0-9 ]+")
+		if err != nil {
+			log.Fatal(err)
+		}
 	    quote = quotes[i]
-        quoteArray = strings.Split(quote," ")
+		quote2 := reg.ReplaceAllString(quote, "")
+		quote3 := strings.ToLower(quote2)
+        quoteArray = strings.Split(quote3," ")
+		
 	    for j := 0; j<len(quoteArray); j++{
             _, ok := mapping[quoteArray[j]]
 			//values, ok := mapping[quoteArray[j]]
@@ -404,7 +381,6 @@ func init() {
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
-    CmdList["quoteid"] = getQuoteByID
     CmdList["quotelist"] = myQuotes
     CmdList["listquotes"] = myQuotes
     CmdList["quoteLeaderboard"] = quoteLeaderboard
