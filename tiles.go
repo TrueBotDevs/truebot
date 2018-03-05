@@ -194,6 +194,7 @@ func tilesHelp(s *discordgo.Session, msg *discordgo.MessageCreate)  {
 }
 
 func tilesChannelUpdate(s *discordgo.Session){
+  return //This feature is being removed as the tiles nerds said they didn't need it and that voice channel goes largely unused
   switch len(q.pID){
     case 0:
       s.ChannelEdit(vTilesID, "Meme Tiles")
