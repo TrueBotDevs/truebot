@@ -77,14 +77,14 @@ func addReminder(s *discordgo.Session, msg *discordgo.MessageCreate, arg string)
 	s.ChannelMessageSend(msg.ChannelID, "Ok, <@" + msg.Author.ID + ">, I will remind you in " + timeToWait.String() + "```" + remainderMsg + "```")
 	
 	if(finished == true){
-		finished = false
 		go doRemind()
 	}
 }
 
 func doRemind(){
     for true{
-        if hasSession{               
+        if hasSession{
+			finished = false
             currentTime := strconv.FormatInt(time.Now().Unix(),10)
             query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
             qte, err := db.Query(query)
