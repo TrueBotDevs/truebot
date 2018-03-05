@@ -11,7 +11,7 @@ import(
 
 var(
     //serverId = "82683153025601536"
-    channelId = "379073357401948162"
+    channelId = "246063490614165504"
 	finished = true
 )
 
@@ -77,14 +77,14 @@ func addReminder(s *discordgo.Session, msg *discordgo.MessageCreate, arg string)
 	s.ChannelMessageSend(msg.ChannelID, "Ok, <@" + msg.Author.ID + ">, I will remind you in " + timeToWait.String() + "```" + remainderMsg + "```")
 	
 	if(finished == true){
-		finished = false
 		go doRemind()
 	}
 }
 
 func doRemind(){
     for true{
-        if hasSession{               
+        if hasSession{
+			finished = false
             currentTime := strconv.FormatInt(time.Now().Unix(),10)
             query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
             qte, err := db.Query(query)
@@ -151,6 +151,7 @@ func doRemind(){
     }
 }
 func init() {
+	go doRemind()
     fmt.Println("Don't forget to register on site for SGDQ 2018!")
 	CmdList["remindme"] = addReminder
 }
