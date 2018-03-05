@@ -11,7 +11,7 @@ import(
 
 var(
     //serverId = "82683153025601536"
-    channelId = "379073357401948162"
+    channelId = "246063490614165504"
 	finished = true
 )
 
@@ -151,7 +151,7 @@ func doRemind(){
     }
 }
 func init() {
+	go doRemind()
     fmt.Println("Don't forget to register on site for SGDQ 2018!")
 	CmdList["remindme"] = addReminder
-	go doRemind()
 }
