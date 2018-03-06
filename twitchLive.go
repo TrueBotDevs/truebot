@@ -8,6 +8,8 @@ import(
 	"io/ioutil"
 	"encoding/json"
 	"time"
+	"strconv"
+	"strings"
 ) 
 
 type Stream struct {
@@ -39,13 +41,13 @@ type Pagination struct{
 func twitchLive(arg string){
 	req, err := http.NewRequest("GET", "https://api.twitch.tv/helix/streams?user_login=" + arg, nil)
 	if err != nil {
-		// handle err
+		fmt.Println("SHIT ", err)
 	}
 	req.Header.Set("Client-Id", "gddz9zfpx3zhgrexzo6rbjjntnz5y3r")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		// handle err
+		fmt.Println("SHIT2", err)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -61,10 +63,12 @@ func twitchLive(arg string){
 	if len(stream.StreamData) > 0{
 		current := time.Now().Unix()
 		start:= stream.StreamData[0].StartedAt.Unix()
-		if stream.StreamData[0].Type == "live" && current-start < 300{
+		fmt.Println(strconv.FormatInt(current,10) + "  " + strconv.FormatInt(start,10))
+		if strings.Compare(stream.StreamData[0].Type, "live") == 0 && current-start < 300{
 		//fmt.Println(stream.StreamData[0].Type)
 			dgSession.ChannelMessageSend("362408790051651597","https://www.twitch.tv/" + arg +" " + stream.StreamData[0].Title)
 		}
+		//fmt.Println(stream.StreamData[0].Type)
 	}
 	//fmt.Println(stream.Data)
 }
@@ -86,7 +90,7 @@ func addStream(s *discordgo.Session, msg *discordgo.MessageCreate, stream string
 
     _, err2 := stmt.Exec(stream,msg.Author.ID)
     if err2 != nil { panic(err2) }
-    s.ChannelMessageSend(msg.ChannelID, "Added your stream to the database:```https:\\\\www.twitch.tv\\" + stream + "``` " )
+    s.ChannelMessageSend(msg.ChannelID, "Added your stream to the database:`https://www.twitch.tv/" + stream + "`" )
     
 }
 
@@ -104,17 +108,54 @@ func checkDB(){
 				err = qte.Scan(&stream)
 				if err != nil {
 					log.Fatal("Parse error:", err)
-				}				
+				}
+				twitchLive(stream)
 			}
-			twitchLive(stream)
+			
 			time.Sleep(300000 * time.Millisecond)
 		}
 	}
 	
 }
 
+func twitchLiveTester(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
+	req, err := http.NewRequest("GET", "https://api.twitch.tv/helix/streams?user_login=" + arg, nil)
+	if err != nil {
+		fmt.Println("SHIT ", err)
+	}
+	req.Header.Set("Client-Id", "gddz9zfpx3zhgrexzo6rbjjntnz5y3r")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("SHIT2", err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	
+	defer resp.Body.Close()
+		
+	if err != nil {
+		log.Fatal("TwitchAPI error:", err)
+	}
+	
+	stream, err := getStreams([]byte(body))
+
+	if len(stream.StreamData) > 0{
+		current := time.Now().Unix()
+		start:= stream.StreamData[0].StartedAt.Unix()
+		if stream.StreamData[0].Type == "live" && current-start < 300{
+		//fmt.Println(stream.StreamData[0].Type)
+			dgSession.ChannelMessageSend("362408790051651597","https://www.twitch.tv/" + arg +" " + stream.StreamData[0].Title)
+		}
+		fmt.Println(stream.StreamData[0].Type)
+	}
+	//fmt.Println(stream.Data)
+}
+
+
+
 func init() {
-	//CmdList["twitchtest"] = twitchLive
+	CmdList["twitchtest"] = twitchLiveTester
 	CmdList["addStream"] = addStream
 	go checkDB()
 }
