@@ -61,9 +61,9 @@ func twitchLive(arg string){
 	if len(stream.StreamData) > 0{
 		current := time.Now().Unix()
 		start:= stream.StreamData[0].StartedAt.Unix()
-		if stream.StreamData[0].Type == "live" && current-start < 60{
+		if stream.StreamData[0].Type == "live" && current-start < 300{
 		//fmt.Println(stream.StreamData[0].Type)
-			dgSession.ChannelMessageSend("362408790051651597","https://www.twitch.tv/" + arg+" " + stream.StreamData[0].Title)
+			dgSession.ChannelMessageSend("362408790051651597","https://www.twitch.tv/" + arg +" " + stream.StreamData[0].Title)
 		}
 	}
 	//fmt.Println(stream.Data)
@@ -107,7 +107,7 @@ func checkDB(){
 				}				
 			}
 			twitchLive(stream)
-			time.Sleep(60000 * time.Millisecond)
+			time.Sleep(300000 * time.Millisecond)
 		}
 	}
 	
