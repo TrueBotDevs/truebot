@@ -340,7 +340,7 @@ func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote 
 			s.ChannelMessageSend(msg.ChannelID,"Invalid Threshold")
 		}
 	}
-	fmt.Println(strconv.Itoa(threshold))
+	//fmt.Println(strconv.Itoa(threshold))
     qte, err := db.Query("SELECT DISTINCT quotee, COUNT(quotee) AS CountOf FROM quotes GROUP BY quotee HAVING CountOf >= "+strconv.Itoa(threshold)+" ORDER BY CountOf DESC, quotee ASC ")
     if err != nil {
 		log.Fatal("Query error:", err)
@@ -383,7 +383,7 @@ func init() {
     CmdList["addquote"] = addQuote
     CmdList["quotelist"] = myQuotes
     CmdList["listquotes"] = myQuotes
-    CmdList["quoteLeaderboard"] = quoteLeaderboard
+    CmdList["quoteleaderboard"] = quoteLeaderboard
 	AliasList["ql"] = quoteLeaderboard
     CmdList["fakequote"] = getFake
 }

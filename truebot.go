@@ -40,7 +40,7 @@ func init() {
     if err != nil {
         log.Fatal("Failed to open database:", err)
 	}
-	fmt.Println(runtime.NumCPU())
+	//fmt.Println(runtime.NumCPU())
 	//defer db.Close()
     
     //Function mapping
@@ -124,7 +124,8 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
             arg = strings.Replace(msg.Content, "!" + cmd + " ", "", 1)
 			arg = strings.Replace(arg, "." + cmd + " ", "", 1)
         }
-        
+		
+		cmd = strings.ToLower(cmd)
         if CmdList[cmd] != nil{
             runInterface(CmdList[cmd],s,msg,arg)
         }else if AliasList[cmd] !=nil{

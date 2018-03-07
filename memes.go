@@ -77,6 +77,4 @@ func init() {
     AliasList["greyscale"] = gayScale
     AliasList["grayscale"] = gayScale
     AliasList["dammit"] = dammitSlurpee
-	AliasList["Ihop"] = ihop
-	AliasList["Ihop"] = ihop
 }

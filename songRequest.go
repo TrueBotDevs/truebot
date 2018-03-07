@@ -253,7 +253,7 @@ func init() {
     CmdList["play"] = checkSong
     AliasList["queue"] = checkSong
 	AliasList["songrequest"] = checkSong
-	AliasList["searchtest"] = checkSong
+	//AliasList["searchtest"] = checkSong
 	//CmdList["searchtest"] = ytSearch
 	CmdList["skip"] = skipSong
     CmdList["stop"] = stopMusic

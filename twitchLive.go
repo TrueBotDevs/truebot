@@ -156,7 +156,7 @@ func twitchLiveTester(s *discordgo.Session, msg *discordgo.MessageCreate, arg st
 
 func init() {
 	CmdList["twitchtest"] = twitchLiveTester
-	CmdList["addStream"] = addStream
+	CmdList["addstream"] = addStream
 	go checkDB()
 }
 //TODO
