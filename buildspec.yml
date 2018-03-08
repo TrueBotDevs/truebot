@@ -9,7 +9,7 @@ phases:
       - go get github.com/bwmarrin/discordgo
       - go get github.com/mattn/go-sqlite3
       - go get github.com/jonas747/dca
-      - go get github.com/rylio/ytdl
+      - go get -u github.com/rylio/ytdl
       - go get google.golang.org/api/googleapi/transport
       - go get google.golang.org/api/youtube/v3
       - echo "Creating $GOPATH/src/truebot-2.0"

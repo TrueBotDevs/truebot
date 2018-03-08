@@ -124,20 +124,24 @@ func playSong(){
 			format := videoInfo.Formats.Extremes(ytdl.FormatAudioBitrateKey, true)[0]
 			downloadURL, err := videoInfo.GetDownloadURL(format)
 			if err != nil {
-				// Handle the error
+				fmt.Println(err)
 			}
 
 			encodingSession, err := dca.EncodeFile(downloadURL.String(), options)
+			
 			if err != nil {
-				// Handle the error
+				fmt.Println(err)
 			}
 			defer encodingSession.Cleanup()
     
 			done := make(chan error)    
+
 			dca.NewStream(encodingSession, vc, done)
+
 			err = <- done
+
 			if err != nil && err != io.EOF {
-				// Handle the error
+				fmt.Println(err)
 			}
 			
 			if(len(songs) > 1){
