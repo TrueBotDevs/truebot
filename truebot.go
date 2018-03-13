@@ -1,7 +1,6 @@
 package main
 
 import (
-    "flag"
     "fmt"
     "strings"
     "github.com/fatih/color"
@@ -10,7 +9,8 @@ import (
     "database/sql"
     "log"
     "reflect"
-	"runtime"
+	  "runtime"
+    "github.com/go-ini/ini"
 )
 
 // Variables used for command line parameters
@@ -30,9 +30,12 @@ var (
 )
 //hm
 func init() {
-    flag.StringVar(&Token, "t", "", "Bot Token")
-    flag.Parse()
-    
+  cfg, err := ini.Load("./config/truebot.ini")
+  if err != nil {
+    fmt.Println("Was not able to load Discord API Key - ", err)
+  }
+  Token = cfg.Section("api-keys").Key("discord").String()
+
     //Connect to the database
     sql.Register("sqlite3_custom", &sqlite.SQLiteDriver{})
     var err error
@@ -42,7 +45,7 @@ func init() {
 	}
 	//fmt.Println(runtime.NumCPU())
 	//defer db.Close()
-    
+
     //Function mapping
 }
 
@@ -56,7 +59,7 @@ func runInterface(fn interface{},s *discordgo.Session, msg *discordgo.MessageCre
 }
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())    
+	runtime.GOMAXPROCS(runtime.NumCPU())
     // Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New("Bot " + Token)
 	if err != nil {
@@ -71,7 +74,7 @@ func main() {
 	if err != nil {
 		fmt.Println("error obtaining account details,", err)
 	}
-    
+
 
 	// Store the account ID for later use.
 	BotID = u.ID
@@ -88,7 +91,7 @@ func main() {
 
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
     dgSession.ChannelMessageSend(botTestingChannel, "Bot is now running TODO: Add a changelog here?")
-    
+
 	<-make(chan struct{})
 	return
 }
@@ -102,20 +105,20 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID == BotID {
 		return
 	}
-    
+
     //Echo that a user uploaded a file
     if len(msg.Attachments) >= 1{
         fmt.Fprintf(color.Output, "(%.5s) %s: %s\n", channel.Name, cyan(msg.Author.Username), "uploaded a file.")
     }
-    
+
     //Don't parse empty strings
     if len(msg.Content)==0{
         return
     }
-    
+
     //Echo message to console
     fmt.Fprintf(color.Output, "(%.5s) %s: %s\n", channel.Name, cyan(msg.Author.Username), msg.Content)
-    
+
     //Check for commands
     if (msg.Content[:1] == "!"||msg.Content[:1] == "."){
         cmd := strings.Split(msg.Content, " ")[0][1:]
@@ -124,7 +127,7 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
             arg = strings.Replace(msg.Content, "!" + cmd + " ", "", 1)
 			arg = strings.Replace(arg, "." + cmd + " ", "", 1)
         }
-		
+
 		cmd = strings.ToLower(cmd)
         if CmdList[cmd] != nil{
             runInterface(CmdList[cmd],s,msg,arg)

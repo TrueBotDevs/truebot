@@ -1,7 +1,7 @@
 package main
 
 import(
-    "github.com/bwmarrin/discordgo"
+  "github.com/bwmarrin/discordgo"
 	"io"
 	"fmt"
 	"strconv"
@@ -9,9 +9,9 @@ import(
 	"github.com/jonas747/dca"
 	"github.com/rylio/ytdl"
 	"flag"
-    "log"
-    "net/http"
-	
+  "log"
+  "net/http"
+
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/youtube/v3"
 )
@@ -21,10 +21,15 @@ var songs = make([]Song,0)
 var songsFinished = true
 
 var maxResults = flag.Int64("max-results", 25, "Max YouTube results")
-const developerKey = "AIzaSyAUEeycj82Q3L7A7XB13krkgS0mdmVB3ss"
+
+cfg, err := ini.Load("./config/truebot.ini")
+if err != nil {
+  fmt.Println("Was not able to load YouTube API Key - ", err)
+}
+youtubeKey := cfg.Section("api-keys").Key("youtube").String()
 
 type Song struct{
-	
+
 	Message *discordgo.MessageCreate
 	Session *discordgo.Session
 	Arg string
@@ -34,7 +39,7 @@ func checkSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 	arg = strings.TrimSpace(arg)
 	var vid string
 	var vid2 string
-	
+
 	if arg != ""{
 		vid = ytSearch(s,msg,arg)
 		vid2 = "https://www.youtube.com/watch?v=" + vid
@@ -43,7 +48,7 @@ func checkSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 	}else{
 		vid = ""
 	}
-	
+
 	_, err := ytdl.GetVideoInfo(vid2)
 	if err != nil || vid == ""{
 		s.ChannelMessageSend(msg.ChannelID,"Video not found")
@@ -51,7 +56,7 @@ func checkSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 		song := Song{msg,s,vid2,}
 		songs = append(songs, song)
 		//fmt.Println(len(songs))
-		
+
 		if len(songs) > 1{
 			s.ChannelMessageSend(strconv.Itoa(246063490614165504),"```Your song is currently number " + strconv.Itoa(len(songs)) + " in the queue.```")
 		}
@@ -72,14 +77,14 @@ func playSong(){
 			s := song.Session
 			msg := song.Message
 			arg := song.Arg
-			
+
 			sender := msg.Author //Person making the command (User)
 			channel, _ := s.Channel(msg.ChannelID) //Channel sender made request in (ChannelID)
 			guildID := channel.GuildID //Server ID
 			guild, _ := s.Guild(guildID) //Actual server object
 			var vChannel *discordgo.Channel //Voice channel
 			var vID string //Voice ChannelID
-						
+
 			videoInfo, err := ytdl.GetVideoInfo(arg)
 			if err != nil {
 				s.ChannelMessageSend(msg.ChannelID,"Video not found")
@@ -88,7 +93,7 @@ func playSong(){
 				songName := videoInfo.Title
 				s.UpdateStatus(0,songName)
 				defer s.UpdateStatus(0,"")
-				
+
 				//Join the voice channel the sender is in (finds sender channel)
 				for _, state := range guild.VoiceStates{
 					if state.UserID == sender.ID{
@@ -104,16 +109,16 @@ func playSong(){
 				vc, _ = s.ChannelVoiceJoin(guildID, vID, false, false)
 			}else{
 				s.ChannelMessageSend(msg.ChannelID,"You are not in a voice channel, the play command is under development")
-			}    
-	
+			}
+
 			//need to check for song that is given in argument
 			err = vc.Speaking(true)
 			if err != nil{
 				fmt.Println("Well shit, can't speak")
 			}
 			defer vc.Speaking(false)
-	
-	
+
+
 			options := dca.StdEncodeOptions
 			options.RawOutput = true
 			options.Bitrate = 96
@@ -128,13 +133,13 @@ func playSong(){
 			}
 
 			encodingSession, err := dca.EncodeFile(downloadURL.String(), options)
-			
+
 			if err != nil {
 				fmt.Println(err)
 			}
 			defer encodingSession.Cleanup()
-    
-			done := make(chan error)    
+
+			done := make(chan error)
 
 			dca.NewStream(encodingSession, vc, done)
 
@@ -143,35 +148,35 @@ func playSong(){
 			if err != nil && err != io.EOF {
 				fmt.Println(err)
 			}
-			
+
 			if(len(songs) > 1){
 				songs = songs[1:len(songs)]
 			}else{
 				songs = nil
 			}
-			
+
 			if(len(songs) < 1){
 				vc.Disconnect()
 				songsFinished = true
 				break
 			}
 		}
-	}		
+	}
 }
-		
+
 func skipSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 	sender := msg.Author //Person making the command (User)
 	channel, _ := s.Channel(msg.ChannelID) //Channel sender made request in (ChannelID)
 	guildID := channel.GuildID //Server ID
 	guild, _ := s.Guild(guildID) //Actual server object
 	var vID string //Voice ChannelID
-	
+
 	for _, state := range guild.VoiceStates{
 		if state.UserID == sender.ID{
 			vID = state.ChannelID
 		}
 	}
-	
+
 	if vc != nil{
 		vc.Disconnect()
 		if len(songs) != 0{
@@ -179,14 +184,14 @@ func skipSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 		}
 	}
 }
-		
+
 func stopMusic(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 	if vc != nil{
 		vc.Disconnect()
 	}
-	
+
 	songs = nil
-		
+
 	s.UpdateStatus(0,"")
 }
 
@@ -195,7 +200,7 @@ func songInfo(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 		song := songs[0]
 		msg1 := song.Message
 		arg1 := song.Arg
-	
+
 		videoInfo, err := ytdl.GetVideoInfo(arg1)
 		if err != nil {
 			s.ChannelMessageSend(msg.ChannelID,"Video not found")
@@ -211,11 +216,11 @@ func songInfo(s *discordgo.Session, msg *discordgo.MessageCreate, arg string){
 
 func ytSearch(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) string {
 		var vids = make([]string,0)
-		
+
         flag.Parse()
 
         client := &http.Client{
-                Transport: &transport.APIKey{Key: developerKey},
+                Transport: &transport.APIKey{Key: youtubeKey},
         }
 
         service, err := youtube.New(client)
@@ -240,10 +245,10 @@ func ytSearch(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) st
                         //videos[item.Id.VideoId] = item.Snippet.Title
                 }
         }
-		
+
 		//fmt.Println(strconv.Itoa(len(vids)) + " " + vids[0])
 
-		
+
 		if len(vids)>0{
 			return vids[0]
 		}else{
