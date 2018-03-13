@@ -38,7 +38,7 @@ func init() {
 
     //Connect to the database
     sql.Register("sqlite3_custom", &sqlite.SQLiteDriver{})
-    db, err := sql.Open("sqlite3_custom", "./config/TrueBot.db")
+    db, err = sql.Open("sqlite3_custom", "./config/TrueBot.db")
     if err != nil {
         log.Fatal("Failed to open database:", err)
 	}
