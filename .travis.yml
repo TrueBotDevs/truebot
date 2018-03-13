@@ -14,17 +14,19 @@ deploy:
     branch: feature/ini-file
   bucket: truebot-ci
   upload_dir: bin
-# - provider: codedeploy
-#   access_key_id: AKIAIUKZRLLZZBM3ESBA
-#   secret_access_key: *1
-#   bucket: truebot-ci
-#   key: bin/truebot.zip
-#   bundle_type: zip
-#   application: truebot-2.0
-#   deployment_group: truebot-2.0
-#   on: *2
+  region: us-west-2
+- provider: codedeploy
+  access_key_id: AKIAIUKZRLLZZBM3ESBA
+  secret_access_key: *1
+  bucket: truebot-ci
+  key: bin/truebot.zip
+  bundle_type: zip
+  application: truebot-2.0
+  deployment_group: truebot-2.0
+  on: *2
+  region: us-west-2
 before_deploy:
 - mv truebot truebot-2.0
-- zip -r truebot.zip scripts/* truebot-2.0
+- zip -r truebot.zip scripts/* truebot-2.0 appspec.yml
 - mkdir -p dpl_cd_upload
 - mv truebot.zip dpl_cd_upload/truebot.zip
