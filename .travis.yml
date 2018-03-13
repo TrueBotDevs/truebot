@@ -24,6 +24,7 @@ deploy:
 #   deployment_group: truebot-2.0
 #   on: *2
 before_deploy:
-- zip -r truebot.zip scripts/* truebot-2.0-github
+- mv truebot truebot-2.0
+- zip -r truebot.zip scripts/* truebot-2.0
 - mkdir -p dpl_cd_upload
 - mv truebot.zip dpl_cd_upload/truebot.zip
