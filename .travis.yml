@@ -1,10 +1,12 @@
 language: go
+
 go:
 - 1.x
+
 script: go build ./...
 
-before_deploy:
-- cp truebot truebot-2.0
+after_success:
+- mv truebot truebot-2.0
 - zip -r truebot.zip scripts/* truebot-2.0 appspec.yml
 - mkdir -p dpl_cd_upload
 - mv truebot.zip dpl_cd_upload/truebot.zip
