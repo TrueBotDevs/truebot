@@ -11,7 +11,7 @@ import(
 	"regexp"
 ) 
 
-
+//VARIABLES FOR STUFF
 var fakeusers = [16]string{"Ed", "Cake", "Oblivion", "TheTrooble", "Trochlis", "Church", "ZachSK", "Kirkq", "Matty", "Twinge", "Slurpee", "Sent", "z1m", "FearfulFerret", "Muffins"}
 var usercount = 16
 var defaultThreshold = 10
@@ -72,6 +72,37 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
 	}
     defer qte.Close()
     
+    var quoteText string
+    var quotee string
+    var quotes [10000]string
+    var index = 0
+    var newIndex = 1
+    for qte.Next(){
+        err = qte.Scan(&quoteText, &quotee)
+        if err != nil {
+            log.Fatal("Parse error:", err)
+        }
+        quotes[index] = makeQuoteFromParts(quoteText,quotee)
+        index++
+    }
+    s1 := rand.NewSource(time.Now().UnixNano())
+    r1 := rand.New(s1)
+    if index == 0{
+        getQuote(s,msg," ")
+        return
+    }
+    newIndex = r1.Intn(index)
+    s.ChannelMessageSend(msg.ChannelID,quotes[newIndex])
+    fmt.Println(quotes[newIndex])
+}
+
+func getQuoteByID(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
+    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp)
+    if err != nil {
+		log.Fatal("Query error:", err)
+ 	}
+    defer qte.Close()
+     
     var quoteText string
     var quotee string
     var quotes [10000]string
@@ -378,6 +409,7 @@ func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote strin
 
 
 func init() {
+	CmdList["quoteid"] = getQuoteByID
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
