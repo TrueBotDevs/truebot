@@ -2,6 +2,13 @@ language: go
 go:
 - 1.x
 script: go build ./...
+
+before_deploy:
+- cp truebot truebot-2.0
+- zip -r truebot.zip scripts/* truebot-2.0 appspec.yml
+- mkdir -p dpl_cd_upload
+- mv truebot.zip dpl_cd_upload/truebot.zip
+
 deploy:
 - provider: s3
   access_key_id: AKIAIUKZRLLZZBM3ESBA
@@ -25,8 +32,3 @@ deploy:
   deployment_group: truebot-2.0
   on: *2
   region: us-west-2
-before_deploy:
-- mv truebot truebot-2.0
-- zip -r truebot.zip scripts/* truebot-2.0 appspec.yml
-- mkdir -p dpl_cd_upload
-- mv truebot.zip dpl_cd_upload/truebot.zip
