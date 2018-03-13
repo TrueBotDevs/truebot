@@ -15,7 +15,7 @@ import (
 
 // Variables used for command line parameters
 var (
-    Token string
+    discordKey string
     BotID string
     CmdList = map[string]interface{}{
         "quote" : getQuote,
@@ -34,17 +34,16 @@ func init() {
   if err != nil {
     fmt.Println("Was not able to load Discord API Key - ", err)
   }
-  Token = cfg.Section("api-keys").Key("discord").String()
+  discordKey = cfg.Section("api-keys").Key("discord").String()
 
     //Connect to the database
     sql.Register("sqlite3_custom", &sqlite.SQLiteDriver{})
-    var err error
-    db, err = sql.Open("sqlite3_custom", "./config/TrueBot.db")
+    db, err := sql.Open("sqlite3_custom", "./config/TrueBot.db")
     if err != nil {
         log.Fatal("Failed to open database:", err)
 	}
 	//fmt.Println(runtime.NumCPU())
-	//defer db.Close()
+	defer db.Close()
 
     //Function mapping
 }
@@ -61,7 +60,7 @@ func runInterface(fn interface{},s *discordgo.Session, msg *discordgo.MessageCre
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
     // Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + Token)
+	dg, err := discordgo.New("Bot " + discordKey)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return

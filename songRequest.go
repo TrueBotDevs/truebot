@@ -11,6 +11,7 @@ import(
 	"flag"
   "log"
   "net/http"
+  "github.com/go-ini/ini"
 
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/youtube/v3"
@@ -22,11 +23,7 @@ var songsFinished = true
 
 var maxResults = flag.Int64("max-results", 25, "Max YouTube results")
 
-cfg, err := ini.Load("./config/truebot.ini")
-if err != nil {
-  fmt.Println("Was not able to load YouTube API Key - ", err)
-}
-youtubeKey := cfg.Section("api-keys").Key("youtube").String()
+var youtubeKey string
 
 type Song struct{
 
@@ -267,4 +264,9 @@ func init() {
 	CmdList["skip"] = skipSong
     CmdList["stop"] = stopMusic
     AliasList["stahp"] = stopMusic
+  cfg, err := ini.Load("./config/truebot.ini")
+  if err != nil {
+    fmt.Println("Was not able to load YouTube API Key - ", err)
+  }
+  youtubeKey = cfg.Section("api-keys").Key("youtube").String()
 }
