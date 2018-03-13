@@ -43,7 +43,7 @@ func init() {
         log.Fatal("Failed to open database:", err)
 	}
 	//fmt.Println(runtime.NumCPU())
-	defer db.Close()
+	//defer db.Close()
 
     //Function mapping
 }
