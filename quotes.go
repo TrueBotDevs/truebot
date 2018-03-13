@@ -409,6 +409,7 @@ func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote strin
 
 
 func init() {
+	CmdList["quoteid"] = getQuoteByID
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
     CmdList["addquote"] = addQuote
