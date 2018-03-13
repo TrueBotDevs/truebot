@@ -20,7 +20,7 @@ deploy:
   skip_cleanup: true
   on: &2
     repo: BGC-Inc/truebot
-    branch: feature/ini-file
+    branch: master
   bucket: truebot-ci
   upload_dir: bin
   region: us-west-2
