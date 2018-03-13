@@ -1,0 +1,36 @@
+language: go
+
+go:
+- 1.x
+
+script: go build ./...
+
+after_success:
+- mv truebot truebot-2.0
+- zip -r truebot.zip scripts/* truebot-2.0 appspec.yml
+- mkdir -p dpl_cd_upload
+- mv truebot.zip dpl_cd_upload/truebot.zip
+
+deploy:
+- provider: s3
+  access_key_id: AKIAIUKZRLLZZBM3ESBA
+  secret_access_key: &1
+    secure: nhYnkEtO1dMYzW7eqYTWFLzaLMofjKLfdvXbgi4BZwF1qw8hONZT/bvBXFjkg5A2g6kC9UQmb2NW/Q6cXFZ+K8YWlW5jQrIvEh10h7MwDUrMS417OaQ00ukAcSe5yQyHIf9zHY024cMCDWGDzXaaDwzaxBJqhCsYZ57F0PcuV3c7InQX+hvj4jfnc1OyQsSy5Am2zkxl5gdGQGaltMBFra9Q3t0jKqYJS8gfbMp3z6rnhbfFfuCyFfxOi0NeXJShLLmjwL617UT2JazCGKIZLlkinqa0PWmxiJ9BBLjiLIY89ohFs2HOf75xE6TdZXu4Y0X6I5k4saEC/6gE4RQ/91YAgf2ZeStsCtghsmQiyMaCOXDv9+nUvXDJr7EXa+SIjyLBYn50kftJAbwJrXualspmKMETXuDEwtM6XW1iF8jEaawUoRPO2sNbyHQAk4fIKnChlZmje684tmS+RhUVxzmLRl3gPDqdeVYpgAQ6uNrS2r+giIb8o9fByZsRJm+c5GXTeeXcqGe6zl0PRocfeK56nTUtT0jfRs/rs36C1dt9I+2hB+VpVzhDVFYubvZXIXWSghe049d31RdkUlKSvZO+gG/8VGvBh9qWbbZ1AvPMWhT9LSAxDfKzTbPi5lH21QT0PjHgFteT597DxwqsD8RHLEH3k3Kl9ZxQRpmbDGY=
+  local_dir: dpl_cd_upload
+  skip_cleanup: true
+  on: &2
+    repo: BGC-Inc/truebot
+    branch: feature/ini-file
+  bucket: truebot-ci
+  upload_dir: bin
+  region: us-west-2
+- provider: codedeploy
+  access_key_id: AKIAIUKZRLLZZBM3ESBA
+  secret_access_key: *1
+  bucket: truebot-ci
+  key: bin/truebot.zip
+  bundle_type: zip
+  application: truebot-2.0
+  deployment_group: truebot-2.0
+  on: *2
+  region: us-west-2
