@@ -36,3 +36,14 @@ var usermap = map[string]string{
     "laplacier" : "Laplacier",
     "oblivion" : "Oblivion",
 }
+
+var permDev = 9001
+var permMod = 1000
+var permUser = 100
+var permNone = 0
+
+var permmap = map[string]int{
+    "86255231913979904" : permDev,
+    "82987575245017088" : permDev,
+    "83742858800009216" : permDev,
+}

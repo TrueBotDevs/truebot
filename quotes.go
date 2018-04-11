@@ -52,9 +52,11 @@ func getQuoteParts(quote string)(string,string){
 		return strings.TrimPrefix(parts[0],"\""), parts[1] 
 }
 
+
 func makeQuoteFromParts(quoteText string,quotee string)(string){
     return "\"" + quoteText + "\" - " + quotee
 }
+
 
 func convertNameFromMap(name string)(string){
     fmt.Println(strings.ToLower(name))
@@ -66,7 +68,7 @@ func convertNameFromMap(name string)(string){
 
 //End Helper Functions
 func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
-    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\"")
+    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE (quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\") AND isDeleted = 0")
     if err != nil {
 		log.Fatal("Query error:", err)
 	}
@@ -95,6 +97,7 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     s.ChannelMessageSend(msg.ChannelID,quotes[newIndex])
     fmt.Println(quotes[newIndex])
 }
+
 
 func getQuoteByID(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
     qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp)
@@ -129,7 +132,7 @@ func getQuoteByID(s *discordgo.Session, msg *discordgo.MessageCreate, comp strin
 
 //Cakebombs 10/17
 func misQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
-    qte, err := db.Query("SELECT quote FROM quotes WHERE quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\"")
+    qte, err := db.Query("SELECT quote FROM quotes WHERE (quote LIKE \"%"+comp+"%\" OR quotee LIKE \"%"+comp+"%\") AND isDeleted = 0")
     if err != nil {
 		log.Fatal("Query error:", err)
 	}
@@ -372,7 +375,7 @@ func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote 
 		}
 	}
 	//fmt.Println(strconv.Itoa(threshold))
-    qte, err := db.Query("SELECT DISTINCT quotee, COUNT(quotee) AS CountOf FROM quotes GROUP BY quotee HAVING CountOf >= "+strconv.Itoa(threshold)+" ORDER BY CountOf DESC, quotee ASC ")
+    qte, err := db.Query("SELECT DISTINCT quotee, COUNT(quotee) AS CountOf FROM quotes WHERE isDeleted = 0 GROUP BY quotee HAVING CountOf >= "+strconv.Itoa(threshold)+" ORDER BY CountOf DESC, quotee ASC ")
     if err != nil {
 		log.Fatal("Query error:", err)
 	}
@@ -403,19 +406,53 @@ func quoteLeaderboard(s *discordgo.Session, msg *discordgo.MessageCreate, quote 
 }
 
 
-func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, quote string){
+func removeQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
+    if checkPerm(msg.Author.ID) < permDev {
+        s.ChannelMessageSend(msg.ChannelID, "Currently only developers can remove quotes, please contact Trooble, Cake, or Slurpee for help")
+        return
+    }
+    newItem := "UPDATE quotes SET isDeleted = 1 WHERE id = (?)" 
+    stmt, err := db.Prepare(newItem)
+    if err != nil { panic(err) }
+    defer stmt.Close()
 
+    _, err2 := stmt.Exec(comp)
+    if err2 != nil { panic(err2) }
+    s.ChannelMessageSend(msg.ChannelID,"Removed quote from DB")
 }
 
 
+func restoreQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string){
+    if checkPerm(msg.Author.ID) < permDev {
+        s.ChannelMessageSend(msg.ChannelID, "Currently only developers can restore quotes, please contact Trooble, Cake, or Slurpee for help")
+        return
+    }
+    newItem := "UPDATE quotes SET isDeleted = 0 WHERE id = (?)" 
+    stmt, err := db.Prepare(newItem)
+    if err != nil { panic(err) }
+    defer stmt.Close()
+
+    _, err2 := stmt.Exec(comp)
+    if err2 != nil { panic(err2) }
+    s.ChannelMessageSend(msg.ChannelID,"Restored quote in DB")
+}
+
+func checkPerm(user string) (int){
+    return permmap[user]        
+}
+
 func init() {
-	CmdList["quoteid"] = getQuoteByID
+    CmdList["addquote"] = addQuote
+    CmdList["fakequote"] = getFake
+    CmdList["listquotes"] = myQuotes
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
-    CmdList["addquote"] = addQuote
-    CmdList["quotelist"] = myQuotes
-    CmdList["listquotes"] = myQuotes
+    CmdList["quoteid"] = getQuoteByID
     CmdList["quoteleaderboard"] = quoteLeaderboard
+    CmdList["quotelist"] = myQuotes
+    CmdList["rmquote"] = removeQuote
+    CmdList["rsquote"] = restoreQuote
 	AliasList["ql"] = quoteLeaderboard
-    CmdList["fakequote"] = getFake
+    AliasList["removequote"] = removeQuote
+    AliasList["restorequote"] = restoreQuote
 }
