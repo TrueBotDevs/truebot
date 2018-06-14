@@ -8,16 +8,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
+	//"strings"
 )
 
-//Stream struct
 type Stream struct {
 	StreamData       []Data     `json:"data"`
 	StreamPagination Pagination `json:"pagination"`
 }
 
-//Data struct
 type Data struct {
 	ID           string    `json:"id"`
 	UserID       string    `json:"user_id"`
@@ -31,17 +31,14 @@ type Data struct {
 	ThumbnailURL string    `json:"thumbnail_url"`
 }
 
-//Pagination struct
 type Pagination struct {
 	Cursor string `json:"cursor"`
 }
 
-//User struct
 type User struct {
 	UserData []UsersData `json:"data"`
 }
 
-//UsersData struct
 type UsersData struct {
 	BroadcasterType string `json:"broadcaster_type"`
 	Description     string `json:"description"`
@@ -55,12 +52,10 @@ type UsersData struct {
 	ViewCount       int    `json:"view_count"`
 }
 
-//Game struct
 type Game struct {
 	Data []GameData `json:"data"`
 }
 
-//GameData struct
 type GameData struct {
 	ID        string `json:"id"`
 	BoxArtURL string `json:"box_art_url"`
@@ -139,7 +134,7 @@ func twitchLive(arg string) {
 
 		current := time.Now().Unix()
 		start := stream.StreamData[0].StartedAt.Unix()
-		if stream.StreamData[0].Type == "live" && current-start < 300 {
+		if stream.StreamData[0].Type == "live" && current-start <=300{
 			//fmt.Println(stream.StreamData[0].Type)
 
 			embed := &discordgo.MessageEmbed{
@@ -157,7 +152,7 @@ func twitchLive(arg string) {
 					},
 				},
 				Image: &discordgo.MessageEmbedImage{
-					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg",
+					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
 				},
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: user.UserData[0].ProfileImageURL,
@@ -246,13 +241,13 @@ func checkDB() {
 func twitchLiveTester(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
 	req, err := http.NewRequest("GET", "https://api.twitch.tv/helix/streams?user_login="+arg, nil)
 	if err != nil {
-		fmt.Println("SHIT ", err)
+		fmt.Println("Error creating twitch request:", err)
 	}
 	req.Header.Set("Client-Id", twitchKey)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println("SHIT2", err)
+		fmt.Println("Error sending twitch request:", err)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -308,7 +303,7 @@ func twitchLiveTester(s *discordgo.Session, msg *discordgo.MessageCreate, arg st
 
 		game, err := getGames([]byte(body3))
 
-		//current := time.Now().Unix()
+		current := time.Now().Unix()
 		//start:= stream.StreamData[0].StartedAt.Unix()
 		if stream.StreamData[0].Type == "live" { //&& current-start < 300{
 			//fmt.Println(stream.StreamData[0].Type)
@@ -328,7 +323,7 @@ func twitchLiveTester(s *discordgo.Session, msg *discordgo.MessageCreate, arg st
 					},
 				},
 				Image: &discordgo.MessageEmbedImage{
-					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg",
+					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
 				},
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: user.UserData[0].ProfileImageURL,
