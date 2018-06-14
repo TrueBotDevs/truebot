@@ -11,35 +11,38 @@ func joinGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
 	channel, _ := s.Channel(msg.ChannelID)
 	guildID := channel.GuildID
 	switch strings.ToLower(group) {
-	case "overwatch":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "190633106842058754")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Overwatch!")
-	case "tabletop":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "270691313911857165")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Tabletop Simulator!")
-	case "minors":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "250769687997186048")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined the Minors!")
-	case "tiles":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "276514629700681728")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Meme Tiles!")
-	case "cars":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "277545381993381889")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Rocket Cars!")
-	case "pubg":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "304049346846916608")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined PUBG!")
-	case "deceit":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "376550070029385749")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Deceit!")
-	case "bombs":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "424309460467449864")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Bombs!")
-	case "civ":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "349279584694566934")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Civ!")
-	default:
-		s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit\nBombs\nCiv```")
+		case "overwatch":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "190633106842058754")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Overwatch!")
+		case "tabletop":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "270691313911857165")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Tabletop Simulator!")
+		case "minors":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "250769687997186048")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined the Minors!")
+		case "tiles":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "276514629700681728")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Meme Tiles!")
+		case "cars":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "277545381993381889")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Rocket Cars!")
+		case "pubg":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "304049346846916608")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined PUBG!")
+		case "deceit":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "376550070029385749")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Deceit!")
+		case "bombs":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "424309460467449864")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Bombs!")
+		case "civ":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "349279584694566934")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined Civ!")
+		case "gdq":
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, "456826313026830356")
+			s.ChannelMessageSend(msg.ChannelID, "You have joined GDQ!")		
+		default:
+			s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit\nBombs\nCiv\nGDQ```")
 	}
 }
 
@@ -75,8 +78,11 @@ func leaveGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) 
 	case "civ":
 		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "349279584694566934")
 		s.ChannelMessageSend(msg.ChannelID, "You have left Civ!")
+	case "gdq":
+		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "456826313026830356")
+		s.ChannelMessageSend(msg.ChannelID, "You have left GDQ!")
 	default:
-		s.ChannelMessageSend(msg.ChannelID, "I can remove you from the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit\nBombs\nCiv```")
+		s.ChannelMessageSend(msg.ChannelID, "I can remove you from the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit\nBombs\nCiv\nGDQ```")
 	}
 }
 
