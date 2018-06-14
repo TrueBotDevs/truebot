@@ -9,6 +9,12 @@ import (
 	"log"
 	"net/http"
 	"time"
+<<<<<<< Updated upstream
+=======
+    "github.com/go-ini/ini"
+	"strconv"
+	//"strings"
+>>>>>>> Stashed changes
 )
 
 //Stream struct
@@ -138,8 +144,13 @@ func twitchLive(arg string) {
 		game, err := getGames([]byte(body3))
 
 		current := time.Now().Unix()
+<<<<<<< Updated upstream
 		start := stream.StreamData[0].StartedAt.Unix()
 		if stream.StreamData[0].Type == "live" && current-start < 300 {
+=======
+		start:= stream.StreamData[0].StartedAt.Unix()
+		if stream.StreamData[0].Type == "live" && current-start <= 300{
+>>>>>>> Stashed changes
 			//fmt.Println(stream.StreamData[0].Type)
 
 			embed := &discordgo.MessageEmbed{
@@ -157,7 +168,11 @@ func twitchLive(arg string) {
 					},
 				},
 				Image: &discordgo.MessageEmbedImage{
+<<<<<<< Updated upstream
 					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg",
+=======
+					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_"+arg+"-320x180.jpg&time=" + strconv.FormatInt(current, 10),
+>>>>>>> Stashed changes
 				},
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: user.UserData[0].ProfileImageURL,
