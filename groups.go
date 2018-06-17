@@ -11,7 +11,6 @@ func joinGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
 	group, _ := grabArg(arg)
 	channel, _ := s.Channel(msg.ChannelID)
 	guildID := channel.GuildID
-	fmt.Println("\""+group+"\"")
 	if group != ""{
 		_, roleID := checkRoles(group)
     
@@ -105,14 +104,14 @@ func checkRoles(arg string) (bool, string) {
 }
 
 func getRoleList() string{
-	list := "```"
+	list := "```\n"
     qte, err := db.Query("SELECT title FROM roles")
     if err != nil {
         log.Fatal("Query error GRL:", err)
     }
     defer qte.Close()
 	var role string
-	for qte.Next() {
+	for qte.Next(){
 		err = qte.Scan(&role)
         if err != nil {
             log.Fatal("Parse error GRL:", err)
