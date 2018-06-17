@@ -4,42 +4,25 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"strings"
+	"log"
 )
 
 func joinGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
 	group, _ := grabArg(arg)
 	channel, _ := s.Channel(msg.ChannelID)
 	guildID := channel.GuildID
-	switch strings.ToLower(group) {
-	case "overwatch":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "190633106842058754")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Overwatch!")
-	case "tabletop":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "270691313911857165")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Tabletop Simulator!")
-	case "minors":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "250769687997186048")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined the Minors!")
-	case "tiles":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "276514629700681728")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Meme Tiles!")
-	case "cars":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "277545381993381889")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Rocket Cars!")
-	case "pubg":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "304049346846916608")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined PUBG!")
-	case "deceit":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "376550070029385749")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Deceit!")
-	case "bombs":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "424309460467449864")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Bombs!")
-	case "civ":
-		s.GuildMemberRoleAdd(guildID, msg.Author.ID, "349279584694566934")
-		s.ChannelMessageSend(msg.ChannelID, "You have joined Civ!")
-	default:
-		s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit\nBombs\nCiv```")
+	fmt.Println("\""+group+"\"")
+	if group != ""{
+		_, roleID := checkRoles(group)
+    
+		if roleID != ""{
+			s.GuildMemberRoleAdd(guildID, msg.Author.ID, roleID)
+			s.ChannelMessageSend(msg.ChannelID, "You have joined "+group+"!")
+		}else{
+			s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: "+getRoleList())
+		}
+	}else{
+		s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: "+getRoleList())
 	}
 }
 
@@ -47,53 +30,99 @@ func leaveGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) 
 	group, _ := grabArg(arg)
 	channel, _ := s.Channel(msg.ChannelID)
 	guildID := channel.GuildID
-	switch strings.ToLower(group) {
-	case "overwatch":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "190633106842058754")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Overwatch!")
-	case "tabletop":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "270691313911857165")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Tabletop Simulator!")
-	case "minors":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "250769687997186048")
-		s.ChannelMessageSend(msg.ChannelID, "You have left the Minors!")
-	case "tiles":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "276514629700681728")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Meme Tiles!")
-	case "cars":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "277545381993381889")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Rocket Cars!")
-	case "pubg":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "304049346846916608")
-		s.ChannelMessageSend(msg.ChannelID, "You have left PUBG!")
-	case "deceit":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "376550070029385749")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Deceit!")
-	case "bombs":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "424309460467449864")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Bombs!")
-	case "civ":
-		s.GuildMemberRoleRemove(guildID, msg.Author.ID, "349279584694566934")
-		s.ChannelMessageSend(msg.ChannelID, "You have left Civ!")
-	default:
-		s.ChannelMessageSend(msg.ChannelID, "I can remove you from the following groups: ```Overwatch\nTabletop\nMinors\nTiles\nCars\nPUBG\nDeceit\nBombs\nCiv```")
+	if group != ""{
+        _, roleID := checkRoles(group)
+    
+	    if roleID != ""{
+	        s.GuildMemberRoleRemove(guildID, msg.Author.ID, roleID)
+	        s.ChannelMessageSend(msg.ChannelID, "You have left "+group+"!")
+	    }else{
+	        s.ChannelMessageSend(msg.ChannelID, "I can remove you from the following groups: "+getRoleList())
+	    }
+	}else{
+		s.ChannelMessageSend(msg.ChannelID, "I can add you to the following groups: "+getRoleList())
 	}
 }
+
+
 
 func addGroup(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
+    group, fullName := grabArg(arg)
 	//GuildRoleCreate to get a new guild, then GuildRoleEdit(guildID, roleID, name string, color int, hoist bool, perm int, mention bool) to name and stuff?
-	channel, _ := s.Channel(msg.ChannelID)
-	guildID := channel.GuildID
-	newRole, err := s.GuildRoleCreate(guildID)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	_, err2 := s.GuildRoleEdit(guildID, newRole.ID, arg, 0x99AAB5, false, 0, true)
-	if err2 != nil {
-		fmt.Println(err2)
+	if (fullName != "" && group != "" && (msg.Author.ID == "82987575245017088" || msg.Author.ID == "83742858800009216" || msg.Author.ID == "86255231913979904" || msg.Author.ID == "82621075220856832")){
+		isRole,_ := checkRoles(group)
+	    if !isRole{
+	        channel, _ := s.Channel(msg.ChannelID)
+	        guildID := channel.GuildID
+	        newRole, err := s.GuildRoleCreate(guildID)
+	
+	        if err != nil {
+		        fmt.Println(err)
+	        }//99AAB5
+	        _, err2 := s.GuildRoleEdit(guildID, newRole.ID, fullName, newRole.Color, false, 1109460032, true)
+	        if err2 != nil {
+		        fmt.Println(err2)
+	        }
+		    newItem := "INSERT INTO roles (role,title,id,uID) values (?,?,?,?)"
+		    stmt, err := db.Prepare(newItem)
+		    if err != nil {
+		    	panic(err)
+		    }
+		    defer stmt.Close()
+		    _, err3 := stmt.Exec(group,fullName,newRole.ID,msg.Author.ID)
+            if err3 != nil {
+                panic(err3)
+            }
+		    s.ChannelMessageSend(msg.ChannelID, "Added New Group: "+fullName+"\nYou are now free to join it using `!join "+group+"`")
+	    }else{
+		    s.ChannelMessageSend(msg.ChannelID, "Group already exists. Join it using !join "+group)
+	    }
+    }else{
+	    s.ChannelMessageSend(msg.ChannelID, "Proper usage: `!addGroup role Role Title`\ni.e. `!addGroup cars Rocket Cars`\nPlease note that this command is restricted to bot admins")
 	}
 }
+
+func checkRoles(arg string) (bool, string) {
+	arg = strings.ToLower(arg)
+    qte, err := db.Query("SELECT role, id FROM roles WHERE role = '" + arg+"'")
+    if err != nil {
+        log.Fatal("Query error CR:", err)
+    }
+    defer qte.Close()
+
+	var role string
+	var id string
+	for qte.Next() {
+		err = qte.Scan(&role,&id)
+        if err != nil {
+            log.Fatal("Parse error CR:", err)
+        }
+        if role != ""{
+			return true, id
+		}
+    }
+	return false, ""
+}
+
+func getRoleList() string{
+	list := "```"
+    qte, err := db.Query("SELECT title FROM roles")
+    if err != nil {
+        log.Fatal("Query error GRL:", err)
+    }
+    defer qte.Close()
+	var role string
+	for qte.Next() {
+		err = qte.Scan(&role)
+        if err != nil {
+            log.Fatal("Parse error GRL:", err)
+        }
+        list = list+strings.Title(role)+"\n"
+    }
+	list = list+"```"
+	return list
+}
+
 
 func init() {
 	CmdList["addgroup"] = addGroup
