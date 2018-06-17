@@ -75,7 +75,12 @@ func main() {
 
     // Register messageCreate as a callback for the messageCreate events.
     dg.AddHandler(messageCreate)
-
+	
+	// Register guildMemberAdd as a callback for the GuildMemberAdd events
+	dg.AddHandler(guildMemberAdd)
+	
+	dg.AddHandler(guildRoleDelete)
+	
     // Open the websocket and begin listening.
     err = dg.Open()
     if err != nil {
@@ -128,5 +133,17 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
         } else if AliasList[cmd] != nil {
             runInterface(AliasList[cmd], s, msg, arg)
         }
+    }
+}
+
+func guildMemberAdd(s *discordgo.Session,member *discordgo.GuildMemberAdd){
+	//assigns pleb role
+	s.GuildMemberRoleAdd(member.GuildID,member.User.ID,"167509907095027713")
+}
+
+func guildRoleDelete(s *discordgo.Session, delete *discordgo.GuildRoleDelete){
+    _, err := db.Exec("DELETE FROM Roles WHERE id = '" + delete.RoleID+"'")
+    if err != nil {
+        log.Fatal("Exec error GRD:", err)
     }
 }
