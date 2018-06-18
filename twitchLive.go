@@ -134,7 +134,7 @@ func twitchLive(arg string) {
 
 		current := time.Now().Unix()
 		start := stream.StreamData[0].StartedAt.Unix()
-		if stream.StreamData[0].Type == "live" && current-start <=300{
+		if stream.StreamData[0].Type == "live" && current-start >= 300 && current-start < 600{
 			//fmt.Println(stream.StreamData[0].Type)
 
 			embed := &discordgo.MessageEmbed{
