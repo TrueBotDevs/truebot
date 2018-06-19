@@ -104,21 +104,23 @@ func checkRoles(arg string) (bool, string) {
 }
 
 func getRoleList() string{
-	list := "```\n"
-    qte, err := db.Query("SELECT title FROM roles")
+	list := ""
+    qte, err := db.Query("SELECT role, title FROM roles")
     if err != nil {
         log.Fatal("Query error GRL:", err)
     }
     defer qte.Close()
 	var role string
+	var title string
 	for qte.Next(){
-		err = qte.Scan(&role)
+		err = qte.Scan(&role,&title)
         if err != nil {
             log.Fatal("Parse error GRL:", err)
         }
-        list = list+strings.Title(role)+"\n"
+        list = list+fmt.Sprintf("%-12s - "+strings.Title(title)+"\n",role)
     }
-	list = list+"```"
+	//Sprintf(list, " ")
+	list = "```\n" +list+ "```"
 	return list
 }
 
