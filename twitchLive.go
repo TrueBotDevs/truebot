@@ -152,7 +152,7 @@ func twitchLive(arg string) {
 					},
 				},
 				Image: &discordgo.MessageEmbedImage{
-					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
+					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + strings.ToLower(arg) + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
 				},
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: user.UserData[0].ProfileImageURL,
