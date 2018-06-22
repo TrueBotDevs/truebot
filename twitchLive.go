@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	//"strings"
+	"strings"
 )
 
 type Stream struct {
@@ -134,7 +134,7 @@ func twitchLive(arg string) {
 
 		current := time.Now().Unix()
 		start := stream.StreamData[0].StartedAt.Unix()
-		if stream.StreamData[0].Type == "live" && current-start <=300{
+		if stream.StreamData[0].Type == "live" && current-start >= 300 && current-start < 600{
 			//fmt.Println(stream.StreamData[0].Type)
 
 			embed := &discordgo.MessageEmbed{
@@ -152,7 +152,7 @@ func twitchLive(arg string) {
 					},
 				},
 				Image: &discordgo.MessageEmbedImage{
-					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
+					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + strings.ToLower(arg) + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
 				},
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: user.UserData[0].ProfileImageURL,
@@ -323,7 +323,7 @@ func twitchLiveTester(s *discordgo.Session, msg *discordgo.MessageCreate, arg st
 					},
 				},
 				Image: &discordgo.MessageEmbedImage{
-					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + arg + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
+					URL: "https://static-cdn.jtvnw.net/previews-ttv/live_user_" + strings.ToLower(arg) + "-320x180.jpg&time=" + strconv.FormatInt(current, 10),
 				},
 				Thumbnail: &discordgo.MessageEmbedThumbnail{
 					URL: user.UserData[0].ProfileImageURL,
