@@ -433,7 +433,6 @@ func checkPerm(user string) int {
 
 func init() {
     CmdList["addquote"] = addQuote
-    CmdList["fakequote"] = getFake
     CmdList["listquotes"] = myQuotes
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote
