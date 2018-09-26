@@ -89,7 +89,7 @@ func main() {
     }
 
     fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-    dgSession.ChannelMessageSend(botTestingChannel, "Bot is now running TODO: Add a changelog here?")
+    dgSession.ChannelMessageSend(botTestingChannel, "Bot is now running```" + getLatestChangelog() + "```")
 
     <-make(chan struct{})
     return
