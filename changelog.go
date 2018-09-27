@@ -24,7 +24,7 @@ type Changes struct {
 }
 
 func getLatestChangelog()(string) {
-    jsonFile, err := os.Open("./config/changelog.json")
+    jsonFile, err := os.Open("config/changelog.json")
     if err != nil {
         fmt.Println(err)
     }
