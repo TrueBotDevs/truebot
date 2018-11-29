@@ -97,7 +97,7 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string) {
 }
 
 func getQuoteByID(s *discordgo.Session, msg *discordgo.MessageCreate, comp string) {
-    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp)
+    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp + "AND isDeleted = 0")
     if err != nil {
         log.Fatal("Query error:", err)
     }
