@@ -23,6 +23,7 @@ var songsFinished = true
 var maxResults = flag.Int64("max-results", 25, "Max YouTube results")
 
 var youtubeKey string
+var botCommandsChannel string
 
 //Song struct
 type Song struct {
@@ -54,7 +55,7 @@ func checkSong(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
 		//fmt.Println(len(songs))
 
 		if len(songs) > 1 {
-			s.ChannelMessageSend(strconv.Itoa(246063490614165504), "```Your song is currently number "+strconv.Itoa(len(songs))+" in the queue.```")
+			s.ChannelMessageSend(botCommandsChannel, "```Your song is currently number "+strconv.Itoa(len(songs))+" in the queue.```")
 		}
 		if songsFinished == true {
 			songsFinished = false
@@ -99,7 +100,7 @@ func playSong() {
 			}
 			//notify of voice channel
 			if vChannel != nil {
-				s.ChannelMessageSend(strconv.Itoa(246063490614165504), "```Playing in: "+vChannel.Name+"\nSong: "+videoInfo.Title+"\nLength: "+videoInfo.Duration.String()+"\nRequested by: "+msg.Author.Username+"```")
+				s.ChannelMessageSend(botCommandsChannel, "```Playing in: "+vChannel.Name+"\nSong: "+videoInfo.Title+"\nLength: "+videoInfo.Duration.String()+"\nRequested by: "+msg.Author.Username+"```")
 				//s.ChannelMessageSend(msg.ChannelID,"You are in " + vChannel.Name + ", the play command is under development")
 				vc, _ = s.ChannelVoiceJoin(guildID, vID, false, false)
 			} else {
@@ -264,4 +265,5 @@ func init() {
 		fmt.Println("Was not able to load YouTube API Key - ", err)
 	}
 	youtubeKey = cfg.Section("api-keys").Key("youtube").String()
+	botCommandsChannel = cfg.Section("channels").Key("bot-commands").String()
 }
