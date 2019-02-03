@@ -97,7 +97,7 @@ func getQuote(s *discordgo.Session, msg *discordgo.MessageCreate, comp string) {
 }
 
 func getQuoteByID(s *discordgo.Session, msg *discordgo.MessageCreate, comp string) {
-    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp)
+    qte, err := db.Query("SELECT quote, quotee FROM quotes WHERE id = " + comp + " AND isDeleted = 0")
     if err != nil {
         log.Fatal("Query error:", err)
     }
@@ -175,7 +175,7 @@ func getFake(s *discordgo.Session, msg *discordgo.MessageCreate, comp string) {
 
     mapping = make(map[string][]string, 10000)
 
-    qte, err := db.Query("SELECT quote FROM quotes")
+    qte, err := db.Query("SELECT quote FROM quotes WHERE isDeleted = 0")
     if err != nil {
         log.Fatal("Query error:", err)
     }
@@ -314,7 +314,7 @@ func myQuotes(s *discordgo.Session, msg *discordgo.MessageCreate, user string) {
         return
     }
     user = convertNameFromMap(user)
-    qte, err := db.Query("SELECT quote, id FROM quotes WHERE quotee = \"" + user + "\"")
+    qte, err := db.Query("SELECT quote, id FROM quotes WHERE quotee = \"" + user + "\" AND isDeleted = 0")
     if err != nil {
         log.Fatal("Query error:", err)
     }
@@ -433,7 +433,6 @@ func checkPerm(user string) int {
 
 func init() {
     CmdList["addquote"] = addQuote
-    CmdList["fakequote"] = getFake
     CmdList["listquotes"] = myQuotes
     CmdList["misquote"] = misQuote
     CmdList["quote"] = getQuote

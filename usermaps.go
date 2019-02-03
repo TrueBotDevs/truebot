@@ -36,6 +36,7 @@ var usermap = map[string]string{
     "your name":       "your name here",
     "zach":            "Zach",
     "zachsk":          "Zach",
+	"raelcun":         "Raelcun",
 }
 
 var permDev = 9001
