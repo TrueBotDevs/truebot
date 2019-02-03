@@ -15,9 +15,10 @@ import (
 
 // Variables used for command line parameters
 var (
-    discordKey string
-    BotID      string
-    CmdList    = map[string]interface{}{
+    discordKey   string
+    BotID        string
+    msgOnStartup string
+    CmdList      = map[string]interface{}{
         "quote": getQuote,
     }
     AliasList = map[string]interface{}{
@@ -35,6 +36,7 @@ func init() {
         fmt.Println("Was not able to load Discord API Key - ", err)
     }
     discordKey = cfg.Section("api-keys").Key("discord").String()
+    msgOnStartup = cfg.Section("settings").Key("startup-message").String()
 
     //Connect to the database
     sql.Register("sqlite3_custom", &sqlite.SQLiteDriver{})
@@ -75,12 +77,12 @@ func main() {
 
     // Register messageCreate as a callback for the messageCreate events.
     dg.AddHandler(messageCreate)
-	
-	// Register guildMemberAdd as a callback for the GuildMemberAdd events
-	dg.AddHandler(guildMemberAdd)
-	
-	dg.AddHandler(guildRoleDelete)
-	
+
+    // Register guildMemberAdd as a callback for the GuildMemberAdd events
+    dg.AddHandler(guildMemberAdd)
+
+    dg.AddHandler(guildRoleDelete)
+
     // Open the websocket and begin listening.
     err = dg.Open()
     if err != nil {
@@ -89,7 +91,9 @@ func main() {
     }
 
     fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-    dgSession.ChannelMessageSend(botTestingChannel, "Bot is now running```" + getLatestChangelog() + "```")
+    if msgOnStartup == "True" {
+        dgSession.ChannelMessageSend(botTestingChannel, "Bot is now running```"+getLatestChangelog()+"```")
+    }
 
     <-make(chan struct{})
     return
@@ -136,13 +140,13 @@ func messageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
     }
 }
 
-func guildMemberAdd(s *discordgo.Session,member *discordgo.GuildMemberAdd){
-	//assigns pleb role
-	s.GuildMemberRoleAdd(member.GuildID,member.User.ID,"167509907095027713")
+func guildMemberAdd(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
+    //assigns pleb role
+    s.GuildMemberRoleAdd(member.GuildID, member.User.ID, "167509907095027713")
 }
 
-func guildRoleDelete(s *discordgo.Session, delete *discordgo.GuildRoleDelete){
-    _, err := db.Exec("DELETE FROM Roles WHERE id = '" + delete.RoleID+"'")
+func guildRoleDelete(s *discordgo.Session, delete *discordgo.GuildRoleDelete) {
+    _, err := db.Exec("DELETE FROM Roles WHERE id = '" + delete.RoleID + "'")
     if err != nil {
         log.Fatal("Exec error GRD:", err)
     }
