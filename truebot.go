@@ -24,10 +24,11 @@ var (
     AliasList = map[string]interface{}{
         "quote": getQuote,
     }
-    db                *sql.DB
-    dgSession         *discordgo.Session
-    hasSession        = false
-    botTestingChannel = "379073357401948162"
+    db                 *sql.DB
+    dgSession          *discordgo.Session
+    hasSession         = false
+    botCommandsChannel string
+    botTestingChannel  string
 )
 
 func init() {
@@ -37,6 +38,8 @@ func init() {
     }
     discordKey = cfg.Section("api-keys").Key("discord").String()
     msgOnStartup = cfg.Section("settings").Key("startup-message").String()
+    botCommandsChannel = cfg.Section("channels").Key("bot-commands").String()
+    botTestingChannel = cfg.Section("channels").Key("bot-testing").String()
 
     //Connect to the database
     sql.Register("sqlite3_custom", &sqlite.SQLiteDriver{})
