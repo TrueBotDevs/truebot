@@ -6,10 +6,6 @@ import (
     "strconv"
 )
 
-var (
-    cmdsID = "246063490614165504"
-)
-
 func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg string) {
     sender := msg.Author
     channel, _ := s.Channel(msg.ChannelID)
@@ -23,10 +19,10 @@ func exclamationAzorae(s *discordgo.Session, msg *discordgo.MessageCreate, arg s
         }
     }
     if vChannel != nil {
-        s.ChannelMessageSend(cmdsID, "<@83742858800009216> you have been pinged to "+vChannel.Name)
-        del, _ := s.Channel(cmdsID)
+        s.ChannelMessageSend(botCommandsChannel, "<@83742858800009216> you have been pinged to "+vChannel.Name)
+        del, _ := s.Channel(botCommandsChannel)
         delThis := del.LastMessageID
-        s.ChannelMessageDelete(cmdsID, delThis)
+        s.ChannelMessageDelete(botCommandsChannel, delThis)
     }
     nextArg, _ := grabArg(arg)
     if nextArg == "stealth" {
@@ -83,5 +79,5 @@ func init() {
     AliasList["greyscale"] = gayScale
     AliasList["grayscale"] = gayScale
     AliasList["dammit"] = dammitSlurpee
-	AliasList["ihob"] = ihob
+    AliasList["ihob"] = ihob
 }

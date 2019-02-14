@@ -10,9 +10,7 @@ import (
 )
 
 var (
-    //serverId = "82683153025601536"
-    channelID = "246063490614165504"
-    finished  = true
+    finished = true
 )
 
 func parseDate(date string) (string, time.Duration) {
@@ -92,7 +90,7 @@ func doRemind() {
             query := "SELECT userId, reminder, reminderId FROM reminders WHERE date <= " + currentTime + " AND isDone = 0;"
             qte, err := db.Query(query)
             if err != nil {
-                dgSession.ChannelMessageSend(channelID, err.Error())
+                dgSession.ChannelMessageSend(botCommandsChannel, err.Error())
                 log.Fatal("Query error:", err)
             }
             defer qte.Close()
@@ -106,10 +104,10 @@ func doRemind() {
             for qte.Next() {
                 err = qte.Scan(&uID, &rem, &reminderID)
                 if err != nil {
-                    dgSession.ChannelMessageSend(channelID, "Shit's really fucked")
+                    dgSession.ChannelMessageSend(botCommandsChannel, "Shit's really fucked")
                     log.Fatal("Parse error:", err)
                 }
-                dgSession.ChannelMessageSend(channelID, "Hey <@"+strconv.Itoa(uID)+">```"+rem+"```")
+                dgSession.ChannelMessageSend(botCommandsChannel, "Hey <@"+strconv.Itoa(uID)+">```"+rem+"```")
                 fmt.Println(rem)
                 reminders[index] = rem
                 reminderIDs[index] = reminderID
@@ -119,7 +117,7 @@ func doRemind() {
                 deleteCmd := "UPDATE reminders SET isDone = 1 WHERE reminderId = ?"
                 stmt, err2 := db.Prepare(deleteCmd)
                 if err2 != nil {
-                    dgSession.ChannelMessageSend(channelID, "Shit's kinda fucked")
+                    dgSession.ChannelMessageSend(botCommandsChannel, "Shit's kinda fucked")
                     panic(err2)
                 }
                 defer stmt.Close()
@@ -127,14 +125,14 @@ func doRemind() {
                 _, err3 := stmt.Exec(reminderIDs[i])
                 if err3 != nil {
                     panic(err3)
-                    dgSession.ChannelMessageSend(channelID, "Shit's super fucked")
+                    dgSession.ChannelMessageSend(botCommandsChannel, "Shit's super fucked")
                 }
             }
             query = "SELECT COUNT(isDone) FROM reminders WHERE isDone = 0;"
 
             qte, err4 := db.Query(query)
             if err4 != nil {
-                dgSession.ChannelMessageSend(channelID, err4.Error())
+                dgSession.ChannelMessageSend(botCommandsChannel, err4.Error())
                 log.Fatal("Query error:", err4)
             }
             defer qte.Close()
@@ -143,7 +141,7 @@ func doRemind() {
             for qte.Next() {
                 err = qte.Scan(&count)
                 if err != nil {
-                    dgSession.ChannelMessageSend(channelID, "Shit's really fucked")
+                    dgSession.ChannelMessageSend(botCommandsChannel, "Shit's really fucked")
                     log.Fatal("Parse error:", err)
                 }
             }
