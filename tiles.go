@@ -65,6 +65,10 @@ func tilesJoin(s *discordgo.Session, msg *discordgo.MessageCreate) {
         s.ChannelMessageSend(msg.ChannelID, "<@"+msg.Author.ID+">, there is no queue to join!  Type `!tiles start` to start one!")
         return
     }
+    if q.owner == msg.Author.ID {
+        s.ChannelMessageSend(msg.ChannelID, "<@"+msg.Author.ID+">, you made the queue so you don't need to `!tiles join`, you're already in the queue.")
+        return
+    }
     for i := 1; i < len(q.pID); i++ {
         if msg.Author.ID == q.pID[i] {
             s.ChannelMessageSend(msg.ChannelID, "<@"+msg.Author.ID+">, you are already in the queue!")
